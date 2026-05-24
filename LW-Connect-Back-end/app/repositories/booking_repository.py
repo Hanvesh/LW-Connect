@@ -1,0 +1,71 @@
+"""Booking repository."""
+from typing import Optional, List
+from uuid import UUID
+from sqlalchemy import select, and_
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.booking import Booking, BookingStatus, Feedback
+from app.schemas.booking import BookingCreate, BookingUpdate, FeedbackCreate
+
+
+class BookingRepository:
+    """Repository for booking data access."""
+    
+    def __init__(self, db: AsyncSession):
+        self.db = db
+    
+    async def create(self, learner_id: UUID, booking_data: BookingCreate) -> Booking:
+        """Create a new booking."""
+        booking = Booking(
+            learner_id=learner_id,
+            **booking_data.model_dump(exclude_unset=True)
+        )
+        self.db.add(booking)
+        await self.db.commit()
+        await self.db.refresh(booking)
+        return booking
+    
+    async def get_by_id(self, booking_id: UUID) -> Optional[Booking]:
+        """Get booking by ID."""
+        result = await self.db.execute(select(Booking).where(Booking.id == booking_id))
+        return result.scalar_one_or_none()
+    
+    async def update(self, booking_id: UUID, booking_data: BookingUpdate) -> Optional[Booking]:
+        """Update booking."""
+        booking = await self.get_by_id(booking_id)
+        if not booking:
+            return None
+        
+        for key, value in booking_data.model_dump(exclude_unset=True).items():
+            setattr(booking, key, value)
+        
+        await self.db.commit()
+        await self.db.refresh(booking)
+        return booking
+    
+    async def list_by_learner(self, learner_id: UUID, skip: int = 0, limit: int = 100) -> List[Booking]:
+        """List bookings by learner."""
+        result = await self.db.execute(
+            select(Booking).where(Booking.learner_id == learner_id).offset(skip).limit(limit)
+        )
+        return list(result.scalars().all())
+    
+    async def list_by_mentor(self, mentor_id: UUID, skip: int = 0, limit: int = 100) -> List[Booking]:
+        """List bookings by mentor."""
+        result = await self.db.execute(
+            select(Booking).where(Booking.mentor_id == mentor_id).offset(skip).limit(limit)
+        )
+        return list(result.scalars().all())
+    
+    async def create_feedback(self, feedback_data: FeedbackCreate) -> Feedback:
+        """Create feedback for a booking."""
+        feedback = Feedback(**feedback_data.model_dump())
+        self.db.add(feedback)
+        await self.db.commit()
+        await self.db.refresh(feedback)
+        return feedback
+    
+    async def get_feedback_by_booking(self, booking_id: UUID) -> Optional[Feedback]:
+        """Get feedback by booking ID."""
+        result = await self.db.execute(select(Feedback).where(Feedback.booking_id == booking_id))
+        return result.scalar_one_or_none()
