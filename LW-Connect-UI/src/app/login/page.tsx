@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/store/auth.store'
 import { authService } from '@/services/api.service'
+import { getApiErrorMessage } from '@/lib/user-mapper'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -25,9 +26,15 @@ export default function LoginPage() {
     try {
       const data = await authService.login(email, password)
       setUser(data.user)
-      router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed')
+      if (data.user.role === 'admin') {
+        router.push('/admin/dashboard')
+      } else if (data.user.role === 'mentor') {
+        router.push('/mentor/dashboard')
+      } else {
+        router.push('/dashboard')
+      }
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Login failed'))
     } finally {
       setIsLoading(false)
     }

@@ -20,7 +20,7 @@ class Cohort(Base):
     end_date = Column(Date)
     max_participants = Column(Integer, default=30)
     is_active = Column(Boolean, default=True)
-    metadata = Column(JSONB, default={})
+    extra_metadata = Column("metadata", JSONB, default={})
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

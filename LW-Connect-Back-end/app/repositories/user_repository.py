@@ -1,11 +1,11 @@
 """User repository."""
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserUpdate
 
 
 class UserRepository:
@@ -41,3 +41,23 @@ class UserRepository:
         """Check if user exists by email."""
         user = await self.get_by_email(email)
         return user is not None
+
+    async def list_all(self, skip: int = 0, limit: int = 100) -> List[User]:
+        """List all users."""
+        result = await self.db.execute(
+            select(User).order_by(User.created_at.desc()).offset(skip).limit(limit)
+        )
+        return list(result.scalars().all())
+
+    async def update(self, user_id: UUID, user_data: UserUpdate) -> Optional[User]:
+        """Update user fields."""
+        user = await self.get_by_id(user_id)
+        if not user:
+            return None
+
+        for key, value in user_data.model_dump(exclude_unset=True).items():
+            setattr(user, key, value)
+
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user

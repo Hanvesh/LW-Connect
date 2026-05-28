@@ -34,9 +34,28 @@ class CohortResponse(CohortBase):
     """Cohort response schema."""
     id: UUID
     course_id: UUID
+    course_name: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    learner_count: int = 0
+    completion_rate: float = 0.0
+    spots_remaining: Optional[int] = None
+    is_enrolled: Optional[bool] = None
     
+    model_config = ConfigDict(from_attributes=True)
+
+
+class LearnerCohortEnrollmentResponse(BaseModel):
+    """Learner enrollment with cohort details."""
+    id: UUID
+    cohort_id: UUID
+    learner_id: UUID
+    enrolled_at: datetime
+    completed_at: Optional[datetime] = None
+    progress_percentage: int
+    is_active: bool
+    cohort: CohortResponse
+
     model_config = ConfigDict(from_attributes=True)
 
 

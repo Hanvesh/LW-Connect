@@ -29,6 +29,16 @@ class BookingUpdate(BaseModel):
     cancellation_reason: Optional[str] = None
 
 
+class FeedbackSummary(BaseModel):
+    """Feedback summary for booking responses."""
+    id: UUID
+    rating: int
+    comment: Optional[str] = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class BookingResponse(BookingBase):
     """Booking response schema."""
     id: UUID
@@ -39,6 +49,8 @@ class BookingResponse(BookingBase):
     cancellation_reason: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    mentor_name: Optional[str] = None
+    feedback: Optional[FeedbackSummary] = None
     
     model_config = ConfigDict(from_attributes=True)
 

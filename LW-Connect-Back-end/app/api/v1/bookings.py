@@ -1,7 +1,7 @@
 """Booking routes."""
 from typing import List
 from uuid import UUID
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -100,5 +100,10 @@ async def create_feedback(
     db: AsyncSession = Depends(get_db)
 ):
     """Create feedback for a booking."""
+    learner_repo = LearnerRepository(db)
+    learner = await learner_repo.get_by_user_id(current_user.id)
+    if not learner:
+        raise HTTPException(status_code=404, detail="Learner profile not found")
+
     booking_service = BookingService(db)
-    return await booking_service.create_feedback(feedback_data)
+    return await booking_service.create_feedback(feedback_data, learner.id)

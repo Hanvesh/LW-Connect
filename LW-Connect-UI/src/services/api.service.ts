@@ -1,17 +1,27 @@
 import api from '@/lib/api'
+import { sendChatMessage } from '@/lib/ai-api'
+import { mapBackendUser } from '@/lib/user-mapper'
 import { User } from '@/types'
 
 export const authService = {
   login: async (email: string, password: string) => {
-    const { data } = await api.post('/auth/login', { email, password })
-    localStorage.setItem('token', data.token)
-    return data
+    const { data } = await api.post('/auth/login', {
+      email: email.trim().toLowerCase(),
+      password,
+    })
+    localStorage.setItem('token', data.access_token)
+    return { ...data, user: mapBackendUser(data.user) }
   },
 
-  signup: async (email: string, password: string, name: string, role: string) => {
-    const { data } = await api.post('/auth/signup', { email, password, name, role })
-    localStorage.setItem('token', data.token)
-    return data
+  signup: async (email: string, password: string, fullName: string, role: string) => {
+    const { data } = await api.post('/auth/signup', {
+      email: email.trim().toLowerCase(),
+      password,
+      full_name: fullName,
+      role,
+    })
+    localStorage.setItem('token', data.access_token)
+    return { ...data, user: mapBackendUser(data.user) }
   },
 
   logout: () => {
@@ -20,7 +30,7 @@ export const authService = {
 
   getCurrentUser: async (): Promise<User> => {
     const { data } = await api.get('/auth/me')
-    return data
+    return mapBackendUser(data)
   },
 }
 
@@ -42,23 +52,26 @@ export const mentorService = {
 }
 
 export const sessionService = {
-  getSessions: async (userId?: string) => {
-    const { data } = await api.get('/sessions', { params: { userId } })
+  getMyBookings: async () => {
+    const { data } = await api.get('/bookings/learner/my-bookings')
     return data
   },
 
-  bookSession: async (mentorId: string, date: string, time: string) => {
-    const { data } = await api.post('/sessions', { mentorId, date, time })
+  bookSession: async (mentorId: string, scheduledAt: string, notes?: string) => {
+    const { data } = await api.post('/bookings', {
+      mentor_id: mentorId,
+      scheduled_at: scheduledAt,
+      notes,
+    })
     return data
   },
 
-  updateSession: async (id: string, updates: any) => {
-    const { data } = await api.put(`/sessions/${id}`, updates)
-    return data
-  },
-
-  submitFeedback: async (id: string, feedback: string, rating: number) => {
-    const { data } = await api.post(`/sessions/${id}/feedback`, { feedback, rating })
+  submitFeedback: async (bookingId: string, rating: number, comment?: string) => {
+    const { data } = await api.post('/bookings/feedback', {
+      booking_id: bookingId,
+      rating,
+      comment,
+    })
     return data
   },
 }
@@ -75,10 +88,26 @@ export const courseService = {
   },
 }
 
-export const aiService = {
-  chat: async (message: string, context?: any) => {
-    const { data } = await api.post('/ai/chat', { message, context })
+export const cohortService = {
+  getAvailableCohorts: async () => {
+    const { data } = await api.get('/cohorts')
     return data
+  },
+
+  getMyEnrollments: async () => {
+    const { data } = await api.get('/cohorts/my-enrollments')
+    return data
+  },
+
+  enrollInCohort: async (cohortId: string) => {
+    const { data } = await api.post(`/cohorts/${cohortId}/enroll/me`)
+    return data
+  },
+}
+
+export const aiService = {
+  chat: async (message: string, userId: string, sessionId?: string) => {
+    return sendChatMessage(message, userId, sessionId)
   },
 
   getRecommendations: async (userId: string) => {
@@ -88,23 +117,51 @@ export const aiService = {
 }
 
 export const adminService = {
-  getDashboardStats: async () => {
-    const { data } = await api.get('/admin/stats')
+  getDashboardMetrics: async () => {
+    const { data } = await api.get('/dashboard/metrics')
     return data
   },
 
   getCohorts: async () => {
-    const { data } = await api.get('/admin/cohorts')
+    const { data } = await api.get('/cohorts')
+    return data
+  },
+
+  createCohort: async (cohort: {
+    name: string
+    course_id: string
+    description?: string
+    start_date?: string
+    end_date?: string
+    max_participants?: number
+    is_active?: boolean
+  }) => {
+    const { data } = await api.post('/cohorts', cohort)
+    return data
+  },
+
+  updateCohort: async (id: string, updates: Record<string, unknown>) => {
+    const { data } = await api.put(`/cohorts/${id}`, updates)
     return data
   },
 
   getUsers: async () => {
-    const { data } = await api.get('/admin/users')
+    const { data } = await api.get('/users')
     return data
   },
 
-  updateCohort: async (id: string, updates: any) => {
-    const { data } = await api.put(`/admin/cohorts/${id}`, updates)
-    return data
+  createUser: async (user: {
+    email: string
+    password: string
+    full_name: string
+    role: string
+  }) => {
+    const { data } = await api.post('/users', user)
+    return mapBackendUser(data)
+  },
+
+  updateUser: async (id: string, updates: Record<string, unknown>) => {
+    const { data } = await api.put(`/users/${id}`, updates)
+    return mapBackendUser(data)
   },
 }

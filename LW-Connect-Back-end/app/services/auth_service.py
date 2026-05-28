@@ -7,6 +7,8 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.learner_repository import LearnerRepository
 from app.repositories.mentor_repository import MentorRepository
 from app.schemas.user import UserCreate, UserLogin, TokenResponse, UserResponse
+from app.schemas.learner import LearnerCreate
+from app.schemas.mentor import MentorCreate
 from app.models.user import UserRole
 
 
@@ -21,11 +23,21 @@ class AuthService:
     
     async def signup(self, user_data: UserCreate) -> TokenResponse:
         """Register a new user."""
-        # Check if user already exists
-        if await self.user_repo.exists_by_email(user_data.email):
+        if user_data.role == UserRole.ADMIN:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
+                detail="Admin accounts must be created by an existing administrator"
+            )
+
+        # Check if user already exists
+        existing_user = await self.user_repo.get_by_email(user_data.email)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    f"This email is already registered as a {existing_user.role.value}. "
+                    "Each email can only be used for one account type. Please sign in instead."
+                )
             )
         
         # Create user
@@ -34,9 +46,9 @@ class AuthService:
         
         # Create profile based on role
         if user.role == UserRole.LEARNER:
-            await self.learner_repo.create(user.id, {})
+            await self.learner_repo.create(user.id, LearnerCreate())
         elif user.role == UserRole.MENTOR:
-            await self.mentor_repo.create(user.id, {})
+            await self.mentor_repo.create(user.id, MentorCreate())
         
         # Generate token
         access_token = create_access_token({"sub": str(user.id)})

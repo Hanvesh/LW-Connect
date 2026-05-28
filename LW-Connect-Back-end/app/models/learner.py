@@ -21,7 +21,7 @@ class Learner(Base):
     experience_level = Column(String(50))  # beginner, intermediate, advanced
     organization = Column(String(255))
     department = Column(String(255))
-    metadata = Column(JSONB, default={})
+    extra_metadata = Column("metadata", JSONB, default={})
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

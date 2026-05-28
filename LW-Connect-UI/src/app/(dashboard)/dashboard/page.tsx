@@ -109,11 +109,17 @@ export default function DashboardPage() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <Link href="/mentors">
               <Button variant="outline" className="w-full h-20 flex-col gap-2">
                 <Users className="h-6 w-6" />
                 Find Mentors
+              </Button>
+            </Link>
+            <Link href="/cohorts">
+              <Button variant="outline" className="w-full h-20 flex-col gap-2">
+                <Users className="h-6 w-6" />
+                Browse Cohorts
               </Button>
             </Link>
             <Link href="/courses">

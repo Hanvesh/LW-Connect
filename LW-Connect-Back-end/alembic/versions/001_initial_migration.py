@@ -8,7 +8,12 @@ Create Date: 2026-05-24 11:48:38
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from pgvector.sqlalchemy import Vector
+
+try:
+    from pgvector.sqlalchemy import Vector
+    HAS_PGVECTOR = True
+except ImportError:
+    HAS_PGVECTOR = False
 
 # revision identifiers, used by Alembic.
 revision = '001'
@@ -18,9 +23,6 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Enable pgvector extension
-    op.execute('CREATE EXTENSION IF NOT EXISTS vector')
-    
     # Create users table
     op.create_table(
         'users',
@@ -146,24 +148,15 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime, server_default=sa.func.now()),
     )
     
-    # Create embedding_metadata table
-    op.create_table(
-        'embedding_metadata',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column('entity_type', sa.String(50), nullable=False),
-        sa.Column('entity_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('content', sa.Text, nullable=False),
-        sa.Column('embedding', Vector(1536)),
-        sa.Column('model_name', sa.String(100)),
-        sa.Column('created_at', sa.DateTime, server_default=sa.func.now()),
-    )
-    
-    # Create indexes
-    op.create_index('idx_embedding_entity', 'embedding_metadata', ['entity_type', 'entity_id'])
+    # Create embedding_metadata table (requires pgvector PostgreSQL extension)
+    # Install with: sudo apt install postgresql-14-pgvector
+    # Then run a separate migration to create this table
 
 
 def downgrade() -> None:
-    op.drop_table('embedding_metadata')
+    if HAS_PGVECTOR:
+        op.drop_index('idx_embedding_entity', table_name='embedding_metadata')
+        op.drop_table('embedding_metadata')
     op.drop_table('feedback')
     op.drop_table('bookings')
     op.drop_table('cohort_enrollments')

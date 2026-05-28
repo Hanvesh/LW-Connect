@@ -2,9 +2,11 @@
 from typing import Optional, List
 from uuid import UUID
 from sqlalchemy import select, func
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.cohort import Cohort, CohortEnrollment
+from app.models.course import Course
 from app.schemas.cohort import CohortCreate, CohortUpdate
 
 
@@ -24,7 +26,11 @@ class CohortRepository:
     
     async def get_by_id(self, cohort_id: UUID) -> Optional[Cohort]:
         """Get cohort by ID."""
-        result = await self.db.execute(select(Cohort).where(Cohort.id == cohort_id))
+        result = await self.db.execute(
+            select(Cohort)
+            .options(selectinload(Cohort.course))
+            .where(Cohort.id == cohort_id)
+        )
         return result.scalar_one_or_none()
     
     async def update(self, cohort_id: UUID, cohort_data: CohortUpdate) -> Optional[Cohort]:
@@ -43,7 +49,44 @@ class CohortRepository:
     async def list_by_course(self, course_id: UUID, skip: int = 0, limit: int = 100) -> List[Cohort]:
         """List cohorts by course."""
         result = await self.db.execute(
-            select(Cohort).where(Cohort.course_id == course_id).offset(skip).limit(limit)
+            select(Cohort)
+            .options(selectinload(Cohort.course))
+            .where(Cohort.course_id == course_id)
+            .order_by(Cohort.start_date.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
+    async def list_active(self, skip: int = 0, limit: int = 100) -> List[Cohort]:
+        """List active cohorts available to learners."""
+        result = await self.db.execute(
+            select(Cohort)
+            .options(selectinload(Cohort.course))
+            .where(Cohort.is_active == True)
+            .order_by(Cohort.start_date.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
+    async def list_enrollments_by_learner(self, learner_id: UUID) -> List[CohortEnrollment]:
+        """List cohort enrollments for a learner."""
+        result = await self.db.execute(
+            select(CohortEnrollment)
+            .where(CohortEnrollment.learner_id == learner_id)
+            .order_by(CohortEnrollment.enrolled_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def list_all(self, skip: int = 0, limit: int = 100) -> List[Cohort]:
+        """List all cohorts."""
+        result = await self.db.execute(
+            select(Cohort)
+            .options(selectinload(Cohort.course))
+            .order_by(Cohort.created_at.desc())
+            .offset(skip)
+            .limit(limit)
         )
         return list(result.scalars().all())
     

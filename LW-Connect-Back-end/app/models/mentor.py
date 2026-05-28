@@ -24,7 +24,7 @@ class Mentor(Base):
     max_mentees = Column(Integer, default=5)
     hourly_rate = Column(Integer, default=0)  # 0 for free mentorship
     availability_schedule = Column(JSONB, default={})  # Weekly availability
-    metadata = Column(JSONB, default={})
+    extra_metadata = Column("metadata", JSONB, default={})
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

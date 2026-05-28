@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Home, Users, BookOpen, MessageSquare, Calendar, Settings, BarChart3, LogOut } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Home, Users, BookOpen, MessageSquare, Calendar, Settings, BarChart3, LogOut, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 
 const learnerNav = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
+  { name: 'Cohorts', href: '/cohorts', icon: GraduationCap },
   { name: 'Find Mentors', href: '/mentors', icon: Users },
   { name: 'Courses', href: '/courses', icon: BookOpen },
   { name: 'AI Assistant', href: '/ai-assistant', icon: MessageSquare },
@@ -30,7 +31,13 @@ const adminNav = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { user, logout } = useAuthStore()
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
 
   const navigation = user?.role === 'admin' ? adminNav : user?.role === 'mentor' ? mentorNav : learnerNav
 
@@ -76,7 +83,7 @@ export function Sidebar() {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
         >
           <LogOut className="h-4 w-4" />

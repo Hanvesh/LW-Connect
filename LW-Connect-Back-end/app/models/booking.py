@@ -1,7 +1,7 @@
 """Booking model."""
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, ForeignKey, Text, Enum as SQLEnum
+from sqlalchemy import Column, String, DateTime, ForeignKey, Text, Integer, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 import enum
@@ -26,11 +26,11 @@ class Booking(Base):
     mentor_id = Column(UUID(as_uuid=True), ForeignKey("mentors.id", ondelete="CASCADE"), nullable=False)
     scheduled_at = Column(DateTime, nullable=False)
     duration_minutes = Column(Integer, default=60)
-    status = Column(SQLEnum(BookingStatus), default=BookingStatus.PENDING)
+    status = Column(SQLEnum(BookingStatus, values_callable=lambda x: [e.value for e in x]), default=BookingStatus.PENDING)
     meeting_url = Column(String(500))
     notes = Column(Text)
     cancellation_reason = Column(Text)
-    metadata = Column(JSONB, default={})
+    extra_metadata = Column("metadata", JSONB, default={})
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

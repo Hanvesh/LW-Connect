@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from app.core.database import get_db
 from app.core.security import require_role
 from app.models.booking import Booking, BookingStatus
-from app.models.cohort import CohortEnrollment
+from app.models.cohort import CohortEnrollment, Cohort
 from app.models.mentor import Mentor
+from app.models.learner import Learner
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
@@ -24,6 +25,9 @@ class DashboardMetrics(BaseModel):
     completed_enrollments: int
     total_mentors: int
     available_mentors: int
+    total_learners: int
+    total_cohorts: int
+    active_cohorts: int
     completion_rate: float
 
 
@@ -60,6 +64,13 @@ async def get_dashboard_metrics(
     available_mentors = await db.scalar(
         select(func.count(Mentor.id)).where(Mentor.is_available == True)
     )
+
+    # Learner and cohort metrics
+    total_learners = await db.scalar(select(func.count(Learner.id)))
+    total_cohorts = await db.scalar(select(func.count(Cohort.id)))
+    active_cohorts = await db.scalar(
+        select(func.count(Cohort.id)).where(Cohort.is_active == True)
+    )
     
     # Calculate completion rate
     completion_rate = (completed_enrollments / total_enrollments * 100) if total_enrollments > 0 else 0.0
@@ -74,5 +85,8 @@ async def get_dashboard_metrics(
         completed_enrollments=completed_enrollments or 0,
         total_mentors=total_mentors or 0,
         available_mentors=available_mentors or 0,
+        total_learners=total_learners or 0,
+        total_cohorts=total_cohorts or 0,
+        active_cohorts=active_cohorts or 0,
         completion_rate=round(completion_rate, 2)
     )

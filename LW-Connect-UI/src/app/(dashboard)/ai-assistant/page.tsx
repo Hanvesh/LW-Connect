@@ -1,32 +1,43 @@
 'use client'
 
+import { useState } from 'react'
 import { AIAssistant } from '@/components/features/ai-assistant'
-import { AIMessage } from '@/types'
+import { AIMessage, Recommendation } from '@/types'
+import { aiService } from '@/services/api.service'
+import { useAuthStore } from '@/store/auth.store'
+
+function mapSourcesToRecommendations(
+  sources: Array<{ content: string; doc_type: string }>
+): Recommendation[] {
+  return sources.slice(0, 3).map((source, index) => {
+    const type = source.doc_type === 'course' ? 'course' : 'mentor'
+    const title = source.content.split('\n')[0].slice(0, 80) || `${type} recommendation`
+    return {
+      type,
+      id: String(index + 1),
+      title,
+      reason: `Relevant ${source.doc_type.replace('_', ' ')} from knowledge base`,
+    }
+  })
+}
 
 export default function AIAssistantPage() {
+  const user = useAuthStore((state) => state.user)
+  const [sessionId, setSessionId] = useState<string>()
+
   const handleSendMessage = async (message: string): Promise<AIMessage> => {
-    // Simulate AI response
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    const data = await aiService.chat(message, user?.id || 'anonymous', sessionId)
+
+    if (data.session_id) {
+      setSessionId(data.session_id)
+    }
+
     return {
       id: Date.now().toString(),
       role: 'assistant',
-      content: `I understand you're looking for "${message}". Based on your profile and learning goals, I can help you find the right mentors and courses. Would you like me to show you some recommendations?`,
+      content: data.response,
       timestamp: new Date(),
-      recommendations: [
-        {
-          type: 'mentor',
-          id: '1',
-          title: 'Dr. Sarah Johnson - Data Science',
-          reason: 'Matches your interest in analytics',
-        },
-        {
-          type: 'course',
-          id: '1',
-          title: 'Introduction to Data Science',
-          reason: 'Perfect for beginners',
-        },
-      ],
+      recommendations: mapSourcesToRecommendations(data.sources),
     }
   }
 

@@ -1,10 +1,13 @@
 """Booking repository."""
 from typing import Optional, List
 from uuid import UUID
-from sqlalchemy import select, and_
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.booking import Booking, BookingStatus, Feedback
+from app.models.mentor import Mentor
+from app.models.learner import Learner
 from app.schemas.booking import BookingCreate, BookingUpdate, FeedbackCreate
 
 
@@ -46,14 +49,30 @@ class BookingRepository:
     async def list_by_learner(self, learner_id: UUID, skip: int = 0, limit: int = 100) -> List[Booking]:
         """List bookings by learner."""
         result = await self.db.execute(
-            select(Booking).where(Booking.learner_id == learner_id).offset(skip).limit(limit)
+            select(Booking)
+            .options(
+                selectinload(Booking.feedback),
+                selectinload(Booking.mentor).selectinload(Mentor.user),
+            )
+            .where(Booking.learner_id == learner_id)
+            .order_by(Booking.scheduled_at.desc())
+            .offset(skip)
+            .limit(limit)
         )
         return list(result.scalars().all())
     
     async def list_by_mentor(self, mentor_id: UUID, skip: int = 0, limit: int = 100) -> List[Booking]:
         """List bookings by mentor."""
         result = await self.db.execute(
-            select(Booking).where(Booking.mentor_id == mentor_id).offset(skip).limit(limit)
+            select(Booking)
+            .options(
+                selectinload(Booking.feedback),
+                selectinload(Booking.learner).selectinload(Learner.user),
+            )
+            .where(Booking.mentor_id == mentor_id)
+            .order_by(Booking.scheduled_at.desc())
+            .offset(skip)
+            .limit(limit)
         )
         return list(result.scalars().all())
     

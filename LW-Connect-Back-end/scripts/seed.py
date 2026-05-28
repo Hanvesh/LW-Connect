@@ -6,6 +6,7 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import AsyncSessionLocal
 from app.core.security import get_password_hash
@@ -18,6 +19,11 @@ async def seed_data():
     """Seed database with sample data."""
     async with AsyncSessionLocal() as db:
         print("🌱 Seeding database...")
+        
+        # Clear existing data (order matters due to foreign keys)
+        for table in ['cohort_enrollments', 'cohorts', 'bookings', 'feedback', 'courses', 'learners', 'mentors', 'users']:
+            await db.execute(text(f'DELETE FROM {table}'))
+        await db.commit()
         
         # Create admin user
         admin = User(

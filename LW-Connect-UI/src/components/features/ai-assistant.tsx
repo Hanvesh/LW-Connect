@@ -53,6 +53,15 @@ export function AIAssistant({ onSendMessage }: AIAssistantProps) {
       setMessages((prev) => [...prev, response])
     } catch (error) {
       console.error('AI error:', error)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: 'Sorry, I could not reach the AI service. Make sure the LangChain service is running on port 8001.',
+          timestamp: new Date(),
+        },
+      ])
     } finally {
       setIsLoading(false)
     }

@@ -20,6 +20,4 @@ class EmbeddingMetadata(Base):
     model_name = Column(String(100))
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    __table_args__ = (
-        {"postgresql_using": "ivfflat"},
-    )
+    __table_args__ = ()
