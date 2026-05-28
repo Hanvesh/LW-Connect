@@ -2,7 +2,7 @@
 
 ## Overview
 
-A production-ready AI-powered mentorship and learning recommendation system built with LangChain, FastAPI, pgvector, and OpenAI.
+A production-ready AI-powered mentorship and learning recommendation system built with LangChain, FastAPI, pgvector, and Amazon Bedrock.
 
 ## What's Been Built
 
@@ -202,9 +202,11 @@ docker-compose up -d
 ## Configuration
 
 Key environment variables:
-- `OPENAI_API_KEY`: OpenAI API key
-- `OPENAI_MODEL`: GPT model (gpt-4-turbo-preview)
-- `EMBEDDING_MODEL`: Embedding model (text-embedding-3-small)
+- `AWS_ACCESS_KEY_ID`: AWS Bedrock access key ID
+- `AWS_SECRET_ACCESS_KEY`: AWS Bedrock secret access key
+- `AWS_REGION`: AWS region for Bedrock
+- `BEDROCK_MODEL`: Bedrock model for text generation
+- `BEDROCK_EMBEDDING_MODEL`: Bedrock model for embeddings
 - `DATABASE_URL`: PostgreSQL connection string
 - `REDIS_URL`: Redis connection string
 - `MAX_TOKENS`: Response length limit (500)

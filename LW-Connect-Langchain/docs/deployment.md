@@ -47,10 +47,13 @@ See `aws/` directory for CloudFormation templates.
 ### Environment Variables
 
 ```bash
-# OpenAI
-OPENAI_API_KEY=sk-prod-xxxxx
-OPENAI_MODEL=gpt-4-turbo-preview
-EMBEDDING_MODEL=text-embedding-3-small
+# AWS Bedrock
+AWS_ACCESS_KEY_ID=AKIA...YOURKEY
+AWS_SECRET_ACCESS_KEY=your-bedrock-secret-access-key
+AWS_REGION=us-west-2
+BEDROCK_MODEL=anthropic.claude-v2
+BEDROCK_EMBEDDING_MODEL=amazon.titan-embed-text
+BEDROCK_API_TIMEOUT=60
 
 # Database (use managed service)
 DATABASE_URL=postgresql://user:pass@prod-db.example.com:5432/lwconnect
@@ -190,7 +193,11 @@ def get_secret(secret_name):
 
 # In config.py
 secrets = get_secret('lwconnect/prod')
-OPENAI_API_KEY = secrets['openai_api_key']
+AWS_ACCESS_KEY_ID = secrets['aws_access_key_id']
+AWS_SECRET_ACCESS_KEY = secrets['aws_secret_access_key']
+AWS_REGION = secrets.get('aws_region', 'us-west-2')
+BEDROCK_MODEL = secrets.get('bedrock_model', 'anthropic.claude-v2')
+BEDROCK_EMBEDDING_MODEL = secrets.get('bedrock_embedding_model', 'amazon.titan-embed-text')
 ```
 
 ## Monitoring Setup

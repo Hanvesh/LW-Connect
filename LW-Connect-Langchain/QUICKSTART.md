@@ -5,7 +5,7 @@ Get LW-Connect AI Assistant running in 5 minutes.
 ## Prerequisites
 
 - Docker & Docker Compose installed
-- OpenAI API key ([get one here](https://platform.openai.com/api-keys))
+- AWS Bedrock credentials
 - 4GB RAM minimum
 
 ## Steps
@@ -19,7 +19,7 @@ cd LW-Connect-Langchain
 
 # Setup environment
 cp .env.example .env
-nano .env  # Add your OPENAI_API_KEY
+nano .env  # Add your AWS Bedrock credentials
 ```
 
 ### 2. Start Services
@@ -138,7 +138,7 @@ Edit prompts in `app/prompts.py`:
 ### Adjust Configuration
 
 Edit `.env` file:
-- `OPENAI_MODEL`: Switch between GPT-4 and GPT-3.5
+- `BEDROCK_MODEL`: Switch the Bedrock model identifier
 - `TEMPERATURE`: Control response creativity (0.0-1.0)
 - `MAX_TOKENS`: Limit response length
 - `TOP_K_RESULTS`: Number of search results
@@ -154,10 +154,10 @@ ports:
   - "6380:6379"  # Redis
 ```
 
-**OpenAI rate limit:**
+**Bedrock usage note:**
 ```bash
-# Use GPT-3.5 for testing
-OPENAI_MODEL=gpt-3.5-turbo
+# Use a lower-cost Bedrock model for testing
+BEDROCK_MODEL=amazon.titan-text-lite
 ```
 
 **Slow queries:**

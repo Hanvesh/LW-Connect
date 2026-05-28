@@ -1,8 +1,5 @@
 from typing import List, Dict, Any
-from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from app.config import settings
+from app.llm_router import llm_router
 from app.retrieval_service import retrieval_service
 from app.models import CourseRecommendationRequest, DocumentType
 from app.prompts import COURSE_RECOMMENDATION_PROMPT
@@ -12,12 +9,7 @@ logger = logging.getLogger(__name__)
 
 class CourseRecommendationEngine:
     def __init__(self):
-        self.llm = ChatOpenAI(
-            model=settings.openai_model,
-            temperature=0.3,
-            max_tokens=settings.max_tokens,
-            openai_api_key=settings.openai_api_key
-        )
+        self.llm = llm_router
     
     async def recommend_courses(
         self, 
@@ -53,19 +45,13 @@ class CourseRecommendationEngine:
         # Build context
         course_context = self._build_course_context(all_results)
         
-        # Generate recommendations
-        prompt = PromptTemplate(
-            template=COURSE_RECOMMENDATION_PROMPT,
-            input_variables=["current_skills", "learning_goals", "course_context", "top_k"]
-        )
-        
-        chain = LLMChain(llm=self.llm, prompt=prompt)
-        response = await chain.arun(
+        prompt_text = COURSE_RECOMMENDATION_PROMPT.format(
             current_skills=", ".join(request.current_skills),
             learning_goals=", ".join(request.learning_goals),
             course_context=course_context,
             top_k=request.top_k
         )
+        response = await self.llm.generate(prompt_text, provider=request.provider)
         
         recommendations = self._parse_course_recommendations(all_results[:request.top_k])
         

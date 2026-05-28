@@ -1,16 +1,13 @@
 from typing import List, Dict, Any
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from app.bedrock import bedrock_embedding_client
 from app.config import settings
 from app.models import Document, DocumentType
 import tiktoken
 
 class EmbeddingPipeline:
     def __init__(self):
-        self.embeddings = OpenAIEmbeddings(
-            model=settings.embedding_model,
-            openai_api_key=settings.openai_api_key
-        )
+        self.embeddings = bedrock_embedding_client
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=settings.chunk_size,
             chunk_overlap=settings.chunk_overlap,

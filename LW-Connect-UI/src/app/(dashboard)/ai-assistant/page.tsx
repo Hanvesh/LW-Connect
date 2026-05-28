@@ -27,9 +27,10 @@ export default function AIAssistantPage() {
 
   const handleSendMessage = async (message: string): Promise<AIMessage> => {
     const data = await aiService.chat(message, user?.id || 'anonymous', sessionId)
+    const nextSessionId = data.session_id ?? (data as any).sessionId
 
-    if (data.session_id) {
-      setSessionId(data.session_id)
+    if (nextSessionId) {
+      setSessionId(nextSessionId)
     }
 
     return {

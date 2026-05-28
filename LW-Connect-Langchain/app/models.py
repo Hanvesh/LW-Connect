@@ -33,12 +33,14 @@ class QueryRequest(BaseModel):
     user_id: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
     top_k: int = 5
+    provider: Optional[str] = None
 
 class MentorRecommendationRequest(BaseModel):
     user_goals: List[str]
     user_skills: List[str]
     cohort_id: Optional[str] = None
     top_k: int = 3
+    provider: Optional[str] = None
 
 class CourseRecommendationRequest(BaseModel):
     user_id: str
@@ -55,6 +57,7 @@ class ChatRequest(BaseModel):
     message: str
     user_id: str
     session_id: Optional[str] = None
+    provider: Optional[str] = None
     
 class ChatResponse(BaseModel):
     response: str

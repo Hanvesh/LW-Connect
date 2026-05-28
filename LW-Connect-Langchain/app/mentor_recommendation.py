@@ -1,8 +1,5 @@
 from typing import List, Dict, Any
-from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from app.config import settings
+from app.llm_router import llm_router
 from app.retrieval_service import retrieval_service
 from app.models import MentorRecommendationRequest, DocumentType
 from app.prompts import MENTOR_RECOMMENDATION_PROMPT
@@ -12,12 +9,7 @@ logger = logging.getLogger(__name__)
 
 class MentorRecommendationEngine:
     def __init__(self):
-        self.llm = ChatOpenAI(
-            model=settings.openai_model,
-            temperature=0.3,  # Lower temperature for more consistent recommendations
-            max_tokens=settings.max_tokens,
-            openai_api_key=settings.openai_api_key
-        )
+        self.llm = llm_router
     
     async def recommend_mentors(
         self, 
@@ -50,20 +42,14 @@ class MentorRecommendationEngine:
         # Build context for LLM
         mentor_context = self._build_mentor_context(mentor_results)
         
-        # Generate recommendations with explanations
-        prompt = PromptTemplate(
-            template=MENTOR_RECOMMENDATION_PROMPT,
-            input_variables=["user_goals", "user_skills", "cohort_id", "mentor_context", "top_k"]
-        )
-        
-        chain = LLMChain(llm=self.llm, prompt=prompt)
-        response = await chain.arun(
+        prompt_text = MENTOR_RECOMMENDATION_PROMPT.format(
             user_goals=", ".join(request.user_goals),
             user_skills=", ".join(request.user_skills),
             cohort_id=request.cohort_id or "Any",
             mentor_context=mentor_context,
             top_k=request.top_k
         )
+        response = await self.llm.generate(prompt_text, provider=request.provider)
         
         # Parse and structure recommendations
         recommendations = self._parse_recommendations(mentor_results[:request.top_k])

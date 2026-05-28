@@ -22,11 +22,16 @@ export async function sendChatMessage(
   userId: string,
   sessionId?: string
 ): Promise<ChatResponse> {
-  const { data } = await aiApi.post<ChatResponse>('/chat', {
+  const payload: Record<string, unknown> = {
     message,
     user_id: userId,
-    session_id: sessionId,
-  })
+  }
+
+  if (sessionId) {
+    payload.session_id = sessionId
+  }
+
+  const { data } = await aiApi.post<ChatResponse>('/chat', payload)
   return data
 }
 

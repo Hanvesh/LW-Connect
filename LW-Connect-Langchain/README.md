@@ -32,8 +32,8 @@ Response
 ## Tech Stack
 
 - **Framework**: FastAPI
-- **LLM**: OpenAI GPT-4 / GPT-3.5
-- **Embeddings**: OpenAI text-embedding-3-small
+- **LLM**: Amazon Bedrock
+- **Embeddings**: Amazon Bedrock embedding models
 - **Vector DB**: PostgreSQL + pgvector
 - **Cache**: Redis
 - **Orchestration**: LangChain
@@ -44,7 +44,7 @@ Response
 
 ```bash
 cp .env.example .env
-# Edit .env with your OpenAI API key
+# Edit .env with your Amazon Bedrock credentials
 ```
 
 ### 2. Start Services
@@ -154,10 +154,18 @@ async def get_mentor_recommendations():
 Key environment variables:
 
 ```bash
-# OpenAI
-OPENAI_API_KEY=your-key
-OPENAI_MODEL=gpt-4-turbo-preview
-EMBEDDING_MODEL=text-embedding-3-small
+# AWS Bedrock
+AWS_ACCESS_KEY_ID=your-bedrock-access-key-id
+AWS_SECRET_ACCESS_KEY=your-bedrock-secret-access-key
+AWS_REGION=us-west-2
+BEDROCK_MODEL=anthropic.claude-v2
+BEDROCK_EMBEDDING_MODEL=amazon.titan-embed-text
+BEDROCK_API_TIMEOUT=60
+
+# Local Ollama router
+LLM_PROVIDER=ollama
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama2
 
 # Database
 DATABASE_URL=postgresql://user:pass@localhost:5432/lwconnect
