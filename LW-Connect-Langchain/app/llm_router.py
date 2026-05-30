@@ -25,11 +25,15 @@ class OllamaTextGenerator:
         self.timeout = timeout
 
     async def generate(self, prompt: str) -> str:
-        url = f"{self.base_url}/api/models/{self.model}"
+        url = f"{self.base_url}/api/generate"
         payload = {
+            "model": self.model,
             "prompt": prompt,
-            "temperature": self.temperature,
-            "max_length": self.max_tokens,
+            "stream": False,
+            "options": {
+                "temperature": self.temperature,
+                "num_predict": self.max_tokens,
+            },
         }
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(url, json=payload)

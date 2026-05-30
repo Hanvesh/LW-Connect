@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LW-Connect | Learner Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#71f8e4",
+                      "surface-tint": "#565e74",
+                      "tertiary-fixed-dim": "#4fdbc8",
+                      "on-surface-variant": "#45464d",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#00201c",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container-high": "#dce9ff",
+                      "on-primary": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-primary-fixed": "#131b2e",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#009485",
+                      "tertiary": "#000000",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#6063ee",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#7c839b",
+                      "outline": "#76777d",
+                      "on-secondary-container": "#fffbff",
+                      "background": "#f8f9ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-bright": "#f8f9ff",
+                      "on-background": "#0b1c30",
+                      "outline-variant": "#c6c6cd",
+                      "surface-container": "#e5eeff",
+                      "surface-container-low": "#eff4ff",
+                      "secondary-fixed": "#e1e0ff",
+                      "on-secondary-fixed-variant": "#2f2ebe",
+                      "on-tertiary-fixed-variant": "#005048",
+                      "inverse-on-surface": "#eaf1ff",
+                      "secondary-fixed-dim": "#c0c1ff",
+                      "on-surface": "#0b1c30",
+                      "inverse-surface": "#213145",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-tertiary-fixed": "#00201c",
+                      "primary": "#000000",
+                      "primary-container": "#131b2e",
+                      "on-secondary-fixed": "#07006c",
+                      "secondary": "#4648d4",
+                      "inverse-primary": "#bec6e0",
+                      "surface-dim": "#cbdbf5",
+                      "primary-fixed": "#dae2fd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px",
+                      "container-max": "1280px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "gutter": "24px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "unit": "4px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "title-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(96, 99, 238, 0.15);
+            border: 1px solid rgba(96, 99, 238, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-primary-container py-lg shadow-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">LW-Connect</h1>
+<p class="font-label-md text-label-md text-on-primary-container">Public Innovation Portal</p>
+</div>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center text-tertiary-fixed font-bold border-l-4 border-tertiary-fixed pl-4 py-3 hover:bg-on-primary-fixed-variant/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-3 hover:bg-on-primary-fixed-variant/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">school</span>
+<span class="font-label-md text-label-md">Courses</span>
+</a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-3 hover:bg-on-primary-fixed-variant/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">groups</span>
+<span class="font-label-md text-label-md">Mentors</span>
+</a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-3 hover:bg-on-primary-fixed-variant/10 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="px-lg py-md border-t border-on-primary-container/20 space-y-md">
+<button class="w-full bg-secondary text-on-secondary-container py-sm rounded-lg font-label-md text-label-md active:scale-95 duration-150">
+                Book Session
+            </button>
+<div class="space-y-sm">
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 py-1 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="md:ml-64 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center h-16 px-margin-desktop bg-surface border-b border-outline-variant sticky top-0 z-40">
+<div class="flex items-center w-full max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full focus:ring-2 focus:ring-secondary-container outline-none font-label-md text-label-md" placeholder="Search learning materials, mentors, or sessions..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg ml-lg">
+<button class="text-on-surface-variant hover:text-primary transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-opacity">
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="p-margin-desktop max-w-container-max mx-auto space-y-gutter">
+<!-- Hero Widget -->
+<section class="relative overflow-hidden rounded-xl bg-primary-container p-xl text-on-primary shadow-lg">
+<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-lg">
+<div class="space-y-sm">
+<h2 class="font-headline-lg text-headline-lg">Welcome back, Sarah.</h2>
+<p class="font-body-lg text-body-lg text-primary-fixed">Your next session "Leadership in Public Policy" is in <span class="text-tertiary-fixed font-bold">2 hours</span>.</p>
+<div class="flex gap-md pt-md">
+<button class="bg-secondary text-on-secondary-container px-lg py-sm rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+                                Join Now
+                            </button>
+<button class="border border-outline-variant text-on-primary px-lg py-sm rounded-lg font-label-md text-label-md hover:bg-white/10 transition-colors">
+                                Reschedule
+                            </button>
+</div>
+</div>
+<div class="hidden lg:block w-48 h-48 opacity-20">
+<img alt="Tech Background" class="w-full h-full object-cover rounded-full" data-alt="A futuristic and sophisticated circular graphic representation of global connectivity with glowing blue lines and data points against a deep navy background. The style is modern corporate, emphasizing innovation and security, with soft bokeh lighting effects to create depth and professional elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT7e7a8uQf5xm33Oiuqjza5skJYBQHGSADxQ7dFJRhz1zttbNcSz-K3bPaVgG50id1deo-HVSefs3S5hg0p1nArRSOBfS0T6uEYj9siSH5ClsHmd4Qq7XJ3H-IZLv0dH4CcEs25cY3fSo8hIE4n6t9bGKMgyxpCaTH8Dc1Nwe6Gvn--go-xOq5OGDdugQnSUq94n8n8OTLhYAz5_f9BgvqA_8rG57U1bUbu_enWNhPhDhqdogrGowXZG2viqFqioAZvmvFvE_4-QA"/>
+</div>
+</div>
+<!-- Decorative background elements -->
+<div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-secondary rounded-full blur-[100px] opacity-20"></div>
+<div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-tertiary-fixed rounded-full blur-[100px] opacity-10"></div>
+</section>
+<!-- Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Current Learning & Recommendations -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Current Learning Pathway -->
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-title-lg text-title-lg">Current Learning Pathway</h3>
+<button class="text-secondary font-label-md text-label-md">View All</button>
+</div>
+<div class="flex flex-col md:flex-row gap-lg items-start">
+<div class="w-full md:w-1/3 aspect-video rounded-lg overflow-hidden shrink-0">
+<img alt="Course Thumbnail" class="w-full h-full object-cover" data-alt="A professional collaborative workspace with a clean wooden table featuring a laptop, notebooks, and a digital tablet. The background is a bright, airy office with large windows and minimalist decor, using a palette of soft whites, greys, and navy blue accents to convey a modern corporate educational environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB57XpIhtAdRi15ajb0C-zsE9YtsNn6tg3lj6fj0gbPPBW8d22hnE4FBkKy-0_eVhYu3SMzrLm5pqdr1snto17Jo22y8VIxmTKNefmE8Uigx7FBKa-OFNrsC9II0pGzjr9_4ZID-5xB46yfczQxu9cLRJHPIMJaA822kAn-O779mGQym93z09muYXxEKWNimd9ZnrcB6PQfoQ5aAKqfbLs3UgOBakHtt1UVptJUpmrFp_GJFpcxHqZignKFp9hxlXgMK2wI1PwSgJ4"/>
+</div>
+<div class="flex-1 space-y-md w-full">
+<div class="flex items-center gap-sm">
+<span class="px-2 py-0.5 bg-surface-variant text-on-surface-variant text-xs font-bold rounded">GOVERNMENT</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">• 64% Complete</span>
+</div>
+<h4 class="font-headline-md text-headline-md">Digital Transformation in Government</h4>
+<div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all duration-700" style="width: 64%"></div>
+</div>
+<div class="flex justify-between items-center">
+<p class="font-body-md text-body-md text-on-surface-variant">Module 4: Agile Governance Models</p>
+<button class="flex items-center gap-xs text-secondary font-bold">
+<span class="font-label-md text-label-md">Resume</span>
+<span class="material-symbols-outlined">play_circle</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Recommendations -->
+<div class="ai-glow bg-surface-container-lowest rounded-xl p-lg space-y-lg relative overflow-hidden">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="font-title-lg text-title-lg">AI Mentor Recommendations</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Mentor Card 1 -->
+<div class="glass-card p-md rounded-xl border border-outline-variant flex items-center gap-md hover:shadow-md transition-all cursor-pointer">
+<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-secondary/20 shrink-0">
+<img alt="Mentor Profile" class="w-full h-full object-cover" data-alt="A professional studio portrait of a confident male executive in his early 40s wearing a charcoal suit. He has a warm, approachable smile and is set against a clean, neutral background. The lighting is soft and professional, emphasizing trust and leadership." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3i9x-i6ZYJ94uSudR5tZWPY2WmGO8WZw67zeODnM9g4PpsKzuuUDgqXwcrFgjxpRaA3E4n9kznLAPFy4D_0zXJbN3IJT-6TMET32rplyIqJWU2hd1EqIHfL55lCaIwTzpfKx9Lq5PEnzcYikeZQYiJnHzScjHQonuMwaSF1GngUDf1WEZfKWo3xBf_cjJNMV1P69Er4Ous2Iq-SPXOJVRPty4XFvJsZE41TXp1K_tZKb8OZaXzBrSvB0EMHMikCbWmgs0h9kCq7w"/>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<h5 class="font-label-md text-label-md font-bold">Dr. Marcus Chen</h5>
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Policy Innovation Lead</p>
+<p class="font-label-sm text-label-sm text-secondary mt-1">98% Match for your path</p>
+</div>
+</div>
+<!-- Mentor Card 2 -->
+<div class="glass-card p-md rounded-xl border border-outline-variant flex items-center gap-md hover:shadow-md transition-all cursor-pointer">
+<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-secondary/20 shrink-0">
+<img alt="Mentor Profile" class="w-full h-full object-cover" data-alt="A close-up professional headshot of a female technology consultant with a bright, intelligent expression. She is wearing a modern navy blue blazer. The background is a softly blurred office environment with morning sunlight, creating an atmosphere of expertise and approachability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3fbiVqBHLbeyP0H2mY90Ev6vBafCnHfsnOJxrV1XKZDgaddkNgwVddh96ThAt5bHvTzSRvUg-EyHxZQxM3bh8u38Q9YKK712kfF-Hnn_2t2hD3FWL1aCd7WD7YoXejYXza4cOm7INTKOD5uWRubQoEsdb8km5PP2y0PEnoY58yVFjO9JUnNDVU5xGCbe3K_SL-rW-QeMlz6PC7LDODfZNhX-IgRslv1q4VhYWsFlV9oeMTaKkTjSsMO2ARGsY-aoUiMGh8TEbxo"/>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<h5 class="font-label-md text-label-md font-bold">Elena Rodriguez</h5>
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Systems Architecture VP</p>
+<p class="font-label-sm text-label-sm text-secondary mt-1">95% Match for your path</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Metrics & Upcoming Sessions -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Metrics Cards -->
+<div class="grid grid-cols-2 gap-lg">
+<div class="bg-surface-container rounded-xl p-lg flex flex-col items-center justify-center text-center border border-outline-variant">
+<span class="material-symbols-outlined text-secondary mb-2 text-3xl">school</span>
+<span class="font-display-lg text-display-lg block">12</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Courses Completed</span>
+</div>
+<div class="bg-surface-container rounded-xl p-lg flex flex-col items-center justify-center text-center border border-outline-variant">
+<span class="material-symbols-outlined text-secondary mb-2 text-3xl">timer</span>
+<span class="font-display-lg text-display-lg block">48</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hours Mentored</span>
+</div>
+</div>
+<!-- Upcoming Sessions -->
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-sm h-full">
+<h3 class="font-title-lg text-title-lg mb-lg">Upcoming Sessions</h3>
+<div class="space-y-md">
+<!-- Session Item 1 -->
+<div class="p-md bg-surface-container-low rounded-lg flex gap-md group hover:bg-surface-container transition-colors border-l-4 border-secondary">
+<div class="flex flex-col items-center justify-center bg-white rounded p-2 min-w-[50px] shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase">Oct</span>
+<span class="font-headline-md text-headline-md">24</span>
+</div>
+<div class="flex-1">
+<h6 class="font-label-md text-label-md font-bold">Leadership in Public Policy</h6>
+<p class="font-label-sm text-label-sm text-on-surface-variant">with Sarah Jenkins</p>
+<p class="font-label-sm text-label-sm text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+                                        14:00 - 15:00
+                                    </p>
+</div>
+</div>
+<!-- Session Item 2 -->
+<div class="p-md bg-surface-container-low rounded-lg flex gap-md group hover:bg-surface-container transition-colors border-l-4 border-outline-variant">
+<div class="flex flex-col items-center justify-center bg-white rounded p-2 min-w-[50px] shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Oct</span>
+<span class="font-headline-md text-headline-md">26</span>
+</div>
+<div class="flex-1">
+<h6 class="font-label-md text-label-md font-bold">Data Visualization Ethics</h6>
+<p class="font-label-sm text-label-sm text-on-surface-variant">with Tom Richards</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+                                        11:00 - 12:30
+                                    </p>
+</div>
+</div>
+</div>
+<button class="w-full mt-xl py-sm border-2 border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-colors">
+                            Manage Calendar
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container rounded-t-xl shadow-lg border-t border-outline-variant/10">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-4 py-1 active:scale-90 duration-75" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 duration-75" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-sm text-label-sm">Discover</span>
+</a>
+<button class="flex flex-col items-center justify-center text-secondary active:scale-90 duration-75">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm">Assistant</span>
+</button>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 duration-75" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-sm text-label-sm">Sessions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 duration-75" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+</main>
+<script>
+        // Micro-interactions and simple state management
+        document.querySelectorAll('nav a, aside nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Simplified active state toggle for demonstration
+                // In a real app, this would be handled by a router
+            });
+        });
+
+        // Skeleton loading simulator (removed after load)
+        window.addEventListener('load', () => {
+            console.log('Dashboard components initialized');
+        });
+    </script>
+</body></html>

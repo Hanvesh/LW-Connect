@@ -2,31 +2,31 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Users, BookOpen, MessageSquare, Calendar, Settings, BarChart3, LogOut, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
+import { MaterialIcon } from '@/components/ui/material-icon'
 
 const learnerNav = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Cohorts', href: '/cohorts', icon: GraduationCap },
-  { name: 'Find Mentors', href: '/mentors', icon: Users },
-  { name: 'Courses', href: '/courses', icon: BookOpen },
-  { name: 'AI Assistant', href: '/ai-assistant', icon: MessageSquare },
-  { name: 'My Sessions', href: '/sessions', icon: Calendar },
+  { name: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
+  { name: 'Courses', href: '/courses', icon: 'school' },
+  { name: 'Mentors', href: '/mentors', icon: 'groups' },
+  { name: 'Cohorts', href: '/cohorts', icon: 'diversity_3' },
+  { name: 'AI Assistant', href: '/ai-assistant', icon: 'auto_awesome' },
+  { name: 'Sessions', href: '/sessions', icon: 'event_available' },
 ]
 
 const mentorNav = [
-  { name: 'Dashboard', href: '/mentor/dashboard', icon: Home },
-  { name: 'Sessions', href: '/mentor/sessions', icon: Calendar },
-  { name: 'Availability', href: '/mentor/availability', icon: Settings },
-  { name: 'Profile', href: '/mentor/profile', icon: Users },
+  { name: 'Dashboard', href: '/mentor/dashboard', icon: 'dashboard' },
+  { name: 'Sessions', href: '/mentor/sessions', icon: 'event_available' },
+  { name: 'Availability', href: '/mentor/availability', icon: 'settings' },
+  { name: 'Profile', href: '/mentor/profile', icon: 'person' },
 ]
 
 const adminNav = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: BarChart3 },
-  { name: 'Cohorts', href: '/admin/cohorts', icon: Users },
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: 'analytics' },
+  { name: 'Cohorts', href: '/admin/cohorts', icon: 'groups' },
+  { name: 'Users', href: '/admin/users', icon: 'person' },
+  { name: 'Analytics', href: '/admin/analytics', icon: 'bar_chart' },
 ]
 
 export function Sidebar() {
@@ -39,57 +39,61 @@ export function Sidebar() {
     router.push('/login')
   }
 
-  const navigation = user?.role === 'admin' ? adminNav : user?.role === 'mentor' ? mentorNav : learnerNav
+  const navigation =
+    user?.role === 'admin' ? adminNav : user?.role === 'mentor' ? mentorNav : learnerNav
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-card border-r">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-primary">LW-Connect</h1>
-        <p className="text-sm text-muted-foreground mt-1">PeopleWave</p>
+    <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-primary-container py-lg shadow-md z-50">
+      <div className="px-lg mb-xl">
+        <h1 className="text-headline-md font-bold text-on-primary">LW-Connect</h1>
+        <p className="text-label-md text-on-primary-container">Public Innovation Portal</p>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3">
+      <nav className="flex-1 space-y-sm">
         {navigation.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center py-3 transition-colors',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'text-tertiary-fixed font-bold border-l-4 border-tertiary-fixed pl-4 hover:bg-on-primary-fixed-variant/10'
+                  : 'text-on-primary-container hover:text-tertiary-fixed-dim pl-5 hover:bg-on-primary-fixed-variant/10'
               )}
             >
-              <Icon className="h-5 w-5" />
-              {item.name}
+              <MaterialIcon name={item.icon} filled={isActive} className="mr-3 text-xl" />
+              <span className="text-label-md">{item.name}</span>
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-sm font-semibold text-primary">
-              {user?.name?.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
-            <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
-          </div>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+      <div className="px-lg py-md border-t border-on-primary-container/20 space-y-md">
+        <Link
+          href="/mentors"
+          className="block w-full bg-secondary text-on-secondary-container py-sm rounded-lg text-label-md text-center hover:opacity-90 transition-opacity active:scale-95"
         >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </button>
+          Book Session
+        </Link>
+        <div className="space-y-sm">
+          <button
+            onClick={handleLogout}
+            className="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 py-1 transition-colors w-full"
+          >
+            <MaterialIcon name="logout" className="mr-3" />
+            <span className="text-label-md">Logout</span>
+          </button>
+          <a
+            href="#"
+            className="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 py-1 transition-colors"
+          >
+            <MaterialIcon name="help" className="mr-3" />
+            <span className="text-label-md">Support</span>
+          </a>
+        </div>
       </div>
-    </div>
+    </aside>
   )
 }

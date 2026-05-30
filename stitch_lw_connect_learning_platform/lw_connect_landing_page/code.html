@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LW-Connect | Public Innovation Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#71f8e4",
+                        "surface-tint": "#565e74",
+                        "tertiary-fixed-dim": "#4fdbc8",
+                        "on-surface-variant": "#45464d",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#00201c",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-high": "#dce9ff",
+                        "on-primary": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-primary-fixed": "#131b2e",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#009485",
+                        "tertiary": "#000000",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#6063ee",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#7c839b",
+                        "outline": "#76777d",
+                        "on-secondary-container": "#fffbff",
+                        "background": "#f8f9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0b1c30",
+                        "outline-variant": "#c6c6cd",
+                        "surface-container": "#e5eeff",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-fixed-variant": "#005048",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-surface": "#0b1c30",
+                        "inverse-surface": "#213145",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-tertiary-fixed": "#00201c",
+                        "primary": "#000000",
+                        "primary-container": "#131b2e",
+                        "on-secondary-fixed": "#07006c",
+                        "secondary": "#4648d4",
+                        "inverse-primary": "#bec6e0",
+                        "surface-dim": "#cbdbf5",
+                        "primary-fixed": "#dae2fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(96, 99, 238, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md font-bold text-primary">LW-Connect</span>
+</div>
+<div class="hidden md:flex items-center gap-xl">
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-secondary py-1" href="#">Dashboard</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity" href="#">Courses</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity" href="#">Mentors</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-opacity" href="#">Analytics</a>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-opacity">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-opacity">auto_awesome</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-opacity">account_circle</span>
+</div>
+</nav>
+<main class="pt-16 pb-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden px-margin-mobile md:px-margin-desktop py-24 md:py-32 flex flex-col md:flex-row items-center gap-xl">
+<div class="flex-1 z-10 max-w-2xl">
+<h1 class="font-display-lg text-display-lg mb-md leading-tight">Empowering Public Sector Innovation.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">Connecting government professionals with world-class mentorship and AI-driven growth pathways to build a more efficient tomorrow.</p>
+<div class="flex flex-wrap gap-md">
+<button class="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all shadow-md transform hover:-translate-y-0.5 active:scale-95">Get Started</button>
+<button class="border border-outline-variant text-on-surface-variant px-xl py-md rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all">Watch Demo</button>
+</div>
+</div>
+<div class="flex-1 relative w-full h-[400px] md:h-[500px]">
+<div class="absolute inset-0 bg-secondary-container/10 rounded-3xl transform rotate-3 scale-95 blur-xl"></div>
+<img alt="Innovation Hub" class="w-full h-full object-cover rounded-3xl shadow-2xl relative z-10 border border-outline-variant" data-alt="A sophisticated modern workspace featuring high-end technology displays and professional public sector employees collaborating in a bright, airy office environment. The scene is illuminated by natural light, reflecting a clean, corporate light-mode aesthetic with deep navy and teal accents. The atmosphere is professional, innovative, and focused on technological advancement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHuXnuQaWbzRfE5CHSu1RXoYYdgfsiOiiPpqvJ4HTgLaEFoyfVWWPiuCEDyrfaLHT5qNHASmBtfsuYTq59Yz3YKC0MN1VwGysS7RnrM9f_RDCGxGnC9v1TVz-rZO_f2MNJqC8QI5bSD4RRM9-XEu6pwY3DeyWdmFRqQaf6fpzIFMfy16Aad7eZXsd3SuXemRkDXseWUat-V-3OeRsmV0i7-GB_GVxyY-BGLy4PP05HTRNC-cyt4m8_m-zNghfIINZlNcYJ-HbNh24"/>
+</div>
+</section>
+<!-- Benefits Section (Bento Grid) -->
+<section class="px-margin-mobile md:px-margin-desktop py-20 bg-surface-container-low">
+<div class="max-w-container-max mx-auto">
+<div class="mb-20 text-center">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Modern Tools for Modern Governance</h2>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-xl mx-auto">Scalable solutions designed for the unique challenges of the public sector.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Benefit 1 -->
+<div class="md:col-span-2 bg-surface-container-lowest p-xl rounded-2xl border border-outline-variant shadow-sm flex flex-col md:flex-row gap-xl items-center">
+<div class="flex-1">
+<span class="material-symbols-outlined text-secondary text-4xl mb-md">bolt</span>
+<h3 class="font-title-lg text-title-lg mb-sm">Unmatched Efficiency</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Streamline departmental workflows with automated project tracking and shared innovation repositories that eliminate redundant efforts.</p>
+</div>
+<div class="flex-1 h-48 w-full bg-surface-variant rounded-xl overflow-hidden">
+<div class="p-md space-y-sm">
+<div class="h-4 w-3/4 bg-on-surface-variant/20 rounded"></div>
+<div class="h-4 w-1/2 bg-on-surface-variant/10 rounded"></div>
+<div class="h-12 bg-secondary/10 border border-secondary/20 rounded-lg flex items-center px-md gap-sm">
+<span class="material-symbols-outlined text-secondary scale-75">check_circle</span>
+<span class="text-xs font-semibold text-secondary">Efficiency Optimized +24%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Benefit 2 -->
+<div class="bg-surface-container-lowest p-xl rounded-2xl border border-outline-variant shadow-sm flex flex-col">
+<span class="material-symbols-outlined text-on-tertiary-container text-4xl mb-md">groups</span>
+<h3 class="font-title-lg text-title-lg mb-sm">Mentor Matching</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Our proprietary algorithm connects you with mentors based on specific policy domains and career objectives.</p>
+</div>
+<!-- Benefit 3 -->
+<div class="bg-surface-container-lowest p-xl rounded-2xl border border-outline-variant shadow-sm flex flex-col">
+<span class="material-symbols-outlined text-secondary text-4xl mb-md">auto_awesome</span>
+<h3 class="font-title-lg text-title-lg mb-sm">AI Insights</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Predictive analytics help identify emerging trends in public policy before they become critical challenges.</p>
+</div>
+<!-- Benefit 4 -->
+<div class="md:col-span-2 bg-primary-container text-on-primary-container p-xl rounded-2xl shadow-xl flex flex-col md:flex-row gap-xl items-center overflow-hidden">
+<div class="flex-1">
+<h3 class="font-title-lg text-title-lg mb-sm text-tertiary-fixed">Government-Grade Security</h3>
+<p class="font-body-md text-body-md opacity-80">Full compliance with international standards, ensuring your data remains sovereign and protected at all times.</p>
+</div>
+<div class="flex-1 relative">
+<span class="material-symbols-outlined text-[120px] opacity-10 absolute -bottom-10 -right-10">verified_user</span>
+<div class="p-md bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed"></div>
+<span class="text-xs uppercase tracking-widest text-tertiary-fixed">Encryption Active</span>
+</div>
+<div class="space-y-xs">
+<div class="h-1 w-full bg-white/10 rounded-full"></div>
+<div class="h-1 w-3/4 bg-white/10 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Assistant Preview -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+<div>
+<div class="inline-flex items-center gap-sm px-md py-xs bg-secondary-container/10 text-secondary rounded-full mb-md">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm">NEXT-GEN AI ASSISTANT</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-md">Your Intelligent Partner in Public Policy</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">LW-Connect's AI doesn't just answer questions; it understands the complex ecosystem of public administration to guide your professional journey.</p>
+<ul class="space-y-md">
+<li class="flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary mt-1">check_circle</span>
+<div>
+<p class="font-label-md text-label-md font-bold">Smart Mentor Recommendations</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Matches based on shared project histories and skill gaps.</p>
+</div>
+</li>
+<li class="flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary mt-1">check_circle</span>
+<div>
+<p class="font-label-md text-label-md font-bold">Policy Analysis</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Instant summaries of new directives and their impact on your department.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container-highest rounded-3xl p-md ai-glow border border-secondary-container/20">
+<div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col h-[500px]">
+<div class="p-md border-b border-outline-variant flex items-center justify-between bg-surface">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="font-label-md text-label-md font-bold">LW-Assistant</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+<div class="flex-1 p-md overflow-y-auto space-y-md bg-surface-container-lowest">
+<!-- Message 1 -->
+<div class="flex justify-end">
+<div class="bg-secondary-container text-on-secondary-container p-md rounded-2xl rounded-tr-none max-w-[80%] shadow-sm">
+<p class="text-sm">I'm looking for a mentor with experience in municipal digital transformation and green energy policy.</p>
+</div>
+</div>
+<!-- Message 2 -->
+<div class="flex justify-start">
+<div class="bg-surface p-md rounded-2xl rounded-tl-none border border-outline-variant max-w-[80%] shadow-sm">
+<p class="text-sm">Of course. I've found 3 mentors matching your criteria. Dr. Elena Vance recently led the 'GreenGrid' initiative in District 4. Would you like to view her profile?</p>
+<div class="mt-md p-sm bg-white rounded-lg border border-outline-variant flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-dim"></div>
+<div class="flex-1">
+<p class="text-xs font-bold">Dr. Elena Vance</p>
+<p class="text-[10px] text-on-surface-variant">Digital Policy Expert • 12 years exp.</p>
+</div>
+<button class="bg-secondary text-on-secondary text-[10px] px-sm py-1 rounded">View</button>
+</div>
+</div>
+</div>
+</div>
+<div class="p-md border-t border-outline-variant bg-surface">
+<div class="flex items-center gap-sm bg-surface-container-low rounded-full px-md py-sm border border-outline-variant">
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm" placeholder="Type your request..." type="text"/>
+<span class="material-symbols-outlined text-secondary cursor-pointer">send</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Mentor Showcase -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 bg-surface-container-low overflow-hidden">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg">Expert Mentor Network</h2>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-xl">Learn from established leaders who have successfully navigated public innovation.</p>
+</div>
+<button class="flex items-center gap-xs font-label-md text-label-md text-secondary hover:underline">
+                        Browse all mentors <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Mentor 1 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden group hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img alt="Sarah Chen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional headshot of a female public policy expert in a corporate environment. She is smiling confidently and wearing professional attire. The background is a clean, modern office space with soft lighting and a primary navy and white color scheme, emphasizing a sophisticated and trustworthy professional persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAavtPnZE6N-m-VhLqx3cNHyw_lhotbh2XUux31IK6P4jqQKb3lr8N3-b5TDWoqEQC7G2KtkoL0D3rmZQ0_8h6PYR2WoL69CBV2FNfL1XZv6HM8J1r7FMASNvJv_5OMmDAv-_iIGpPaFkVGQ4-fiVFq0qfBFQaquJKbw541aVPIkvozbrhUKDgkJQKV9bmKXFfWIrcD3ZxzKSp5PWri3KW5FvuM_Zur10EMfvhYw4NeMUMQ37j-LxC_y9jBje1_b_khgNHQ9m2Z7z4"/>
+<div class="absolute top-sm right-sm px-sm py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-xs border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] font-bold text-on-tertiary-container">VERIFIED</span>
+</div>
+</div>
+<div class="p-md">
+<h4 class="font-label-md text-label-md font-bold">Sarah Chen</h4>
+<p class="text-xs text-on-surface-variant mb-md">Former CTO, Smart Cities Dept.</p>
+<div class="flex flex-wrap gap-xs mb-md">
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">Digital Governance</span>
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">AI Ethics</span>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors">Book Session</button>
+</div>
+</div>
+<!-- Mentor 2 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden group hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img alt="Robert Vance" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A distinguished male government consultant with a focused and approachable expression. He is dressed in a charcoal suit against a minimalist, high-end corporate backdrop. The lighting is crisp and clear, following a modern professional aesthetic with deep navy and slate tones. The overall impression is one of deep experience and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-YogkyoSUM1Xd5Y7sszAvim03u7B57awbfQNlqsVryrpwlE8wVzjULLUInk6zE4wKzL46HcWur91vKd4q6wctu1hqeMOuLSQXOpVumx-i7oNlvONtnRtdhNhO4H8RxuTeNKaRQdTRYkNGNiM8lVbkeRMojL0F6X19OY_-IhzVtK1FI4FmR43-As44Jhg07i75RVxUTo065JDBt23-QpWiZcuuEuYJA7r_i67YToYGzpUyfyIVw9UyGhVB1X2VbWE_oTFylz5RZHs"/>
+<div class="absolute top-sm right-sm px-sm py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-xs border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] font-bold text-on-tertiary-container">VERIFIED</span>
+</div>
+</div>
+<div class="p-md">
+<h4 class="font-label-md text-label-md font-bold">Marcus Thorne</h4>
+<p class="text-xs text-on-surface-variant mb-md">Head of Public Safety Innovation</p>
+<div class="flex flex-wrap gap-xs mb-md">
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">Security Infrastructure</span>
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">IoT</span>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors">Book Session</button>
+</div>
+</div>
+<!-- Mentor 3 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden group hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An expert female academic researcher focusing on public innovation, presented in a modern, brightly lit environment. She wears professional attire and has an intelligent, welcoming demeanor. The visual style is high-contrast and professional, with a clean light-mode palette and subtle teal accents. The mood is intellectually stimulating and progressive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVslQHhUH2AiEdham938WioXORo9EG9dJ02iPRvzgp7lBZDE94znLQ7iJZ2ruTEjPx_Hx26nCNuADZD5XE72SDjelS1mOo1douqK46kI2KW7NgUXqdAdsyR4FVAUVuTZltI2g_FCJtN_CeV8pfqicoQArSHJe5yTCXJ2SAlPn_p4ctqq7l1W9xA5bKbHts1gAxywXK6rOkRkcCHq8jSY0tDP0FChU72YMayUuBZGkF6HXGx__JGtUtXypRdEq3Rvrco99KVTDbrRM"/>
+<div class="absolute top-sm right-sm px-sm py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-xs border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] font-bold text-on-tertiary-container">VERIFIED</span>
+</div>
+</div>
+<div class="p-md">
+<h4 class="font-label-md text-label-md font-bold">Elena Rodriguez</h4>
+<p class="text-xs text-on-surface-variant mb-md">Sustainability Policy Lead</p>
+<div class="flex flex-wrap gap-xs mb-md">
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">Green Energy</span>
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">Grants</span>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors">Book Session</button>
+</div>
+</div>
+<!-- Mentor 4 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden group hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img alt="James Wilson" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A portrait of a male leader in digital transformation, shown in a sophisticated glass-walled office with a view of a modern skyline. He is dressed in business casual, conveying a blend of tech-savviness and executive leadership. The image uses a crisp, professional aesthetic with deep blue tones and vibrant lighting, reflecting a forward-thinking and dynamic corporate identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqMGHf_puWJNFPf4J8A3tEqPu0LAAw1PJkZld7tiitt0NVmS8fI5tYO3mzrbJQphpNaUtyCuvEDRa2i6zSWsuvbTLdfkHalTdSnB2J2PCUCuw_T26KR8wupsNs4gGn3Pch7_8usqOPS3-UPBC9oa1tKixobMImQXn0GNL-IkkY7echzPfB8o1wH8F6M58L0iR56gLiEu0NdeIDwfquoXzRV1dzTAUywBiyKsplhBIzf3STrWN1jbsA3ID4dWN_hO40kgbb_V6pHE"/>
+<div class="absolute top-sm right-sm px-sm py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-xs border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] font-bold text-on-tertiary-container">VERIFIED</span>
+</div>
+</div>
+<div class="p-md">
+<h4 class="font-label-md text-label-md font-bold">James Wilson</h4>
+<p class="text-xs text-on-surface-variant mb-md">Director of Digital Experience</p>
+<div class="flex flex-wrap gap-xs mb-md">
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">UX Design</span>
+<span class="text-[10px] bg-surface-variant text-primary px-2 py-0.5 rounded-full">Agile Gov</span>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors">Book Session</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Analytics Preview -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 max-w-container-max mx-auto overflow-hidden">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl items-center">
+<div class="lg:col-span-5">
+<h2 class="font-headline-lg text-headline-lg mb-md">Data-Driven Transformation</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">Program managers gain high-fidelity visibility into skill progression, departmental impact, and innovation velocity across the entire organization.</p>
+<div class="space-y-md">
+<div class="flex items-center gap-md p-md bg-white rounded-xl border border-outline-variant shadow-sm">
+<div class="w-12 h-12 bg-tertiary-fixed rounded-lg flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold">Impact Metrics</h5>
+<p class="text-xs text-on-surface-variant">Measure ROI of mentorship on policy delivery.</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-md bg-white rounded-xl border border-outline-variant shadow-sm">
+<div class="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined">pie_chart</span>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold">Resource Allocation</h5>
+<p class="text-xs text-on-surface-variant">Identify skill shortages in real-time.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7">
+<div class="bg-surface-container-high rounded-3xl p-md border border-outline-variant shadow-2xl rotate-1">
+<div class="bg-white rounded-2xl overflow-hidden shadow-inner">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+<h4 class="font-label-md text-label-md font-bold">Global Innovation Dashboard</h4>
+<div class="flex gap-sm">
+<div class="px-3 py-1 bg-surface-variant rounded text-[10px] font-bold">Last 30 Days</div>
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</div>
+</div>
+<div class="p-lg space-y-lg">
+<div class="grid grid-cols-3 gap-md text-center">
+<div class="p-md bg-surface-container-low rounded-xl">
+<p class="text-xs text-on-surface-variant mb-1">Active Mentors</p>
+<p class="text-2xl font-bold text-primary">1,240</p>
+<p class="text-[10px] text-on-tertiary-container">+12% vs LY</p>
+</div>
+<div class="p-md bg-surface-container-low rounded-xl">
+<p class="text-xs text-on-surface-variant mb-1">Innovations</p>
+<p class="text-2xl font-bold text-primary">482</p>
+<p class="text-[10px] text-on-tertiary-container">+45% vs LY</p>
+</div>
+<div class="p-md bg-surface-container-low rounded-xl">
+<p class="text-xs text-on-surface-variant mb-1">Skill Growth</p>
+<p class="text-2xl font-bold text-primary">89%</p>
+<p class="text-[10px] text-on-tertiary-container">Target: 85%</p>
+</div>
+</div>
+<div class="h-48 w-full bg-surface-container-low rounded-xl relative overflow-hidden flex items-end p-md gap-sm">
+<!-- Simulated Bar Chart -->
+<div class="flex-1 bg-secondary rounded-t h-1/2"></div>
+<div class="flex-1 bg-secondary/80 rounded-t h-3/4"></div>
+<div class="flex-1 bg-secondary rounded-t h-2/3"></div>
+<div class="flex-1 bg-secondary/90 rounded-t h-full"></div>
+<div class="flex-1 bg-secondary rounded-t h-1/2"></div>
+<div class="flex-1 bg-secondary/70 rounded-t h-4/5"></div>
+<div class="flex-1 bg-secondary rounded-t h-3/5"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA / Trust -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 text-center">
+<div class="max-w-3xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg mb-md">Ready to Transform Your Department?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl">Join hundreds of government agencies already using LW-Connect to drive public innovation and career excellence.</p>
+<div class="flex justify-center gap-md mb-20">
+<button class="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all shadow-md">Get Started Now</button>
+<button class="border border-outline text-on-surface px-xl py-md rounded-lg font-label-md text-label-md hover:bg-surface-container transition-all">Request Proposal</button>
+</div>
+<div class="pt-10 border-t border-outline-variant">
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-8">Trusted by institutions worldwide</p>
+<div class="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+<span class="text-xl font-extrabold tracking-tighter">GOV.UK</span>
+<span class="text-xl font-extrabold tracking-tighter">EU.DATA</span>
+<span class="text-xl font-extrabold tracking-tighter">UNESCO</span>
+<span class="text-xl font-extrabold tracking-tighter">FEDERAL.CONNECT</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container shadow-lg rounded-t-xl">
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-4 py-1">
+<span class="material-symbols-outlined text-sm">home</span>
+<span class="font-label-sm text-[10px]">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">explore</span>
+<span class="font-label-sm text-[10px]">Discover</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white -mt-8 shadow-lg">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">event_available</span>
+<span class="font-label-sm text-[10px]">Sessions</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</div>
+</nav>
+<!-- Vanilla JS for Micro-interactions -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth reveal animation for sections
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-10');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+                observer.observe(section);
+            });
+
+            // Interactive Assistant Preview
+            const assistantInput = document.querySelector('input[placeholder="Type your request..."]');
+            const assistantSubmit = assistantInput.nextElementSibling;
+            
+            assistantSubmit.addEventListener('click', () => {
+                if (assistantInput.value.trim() !== '') {
+                    assistantInput.value = '';
+                    // Visual feedback only for demo
+                    assistantSubmit.classList.add('scale-125');
+                    setTimeout(() => assistantSubmit.classList.remove('scale-125'), 200);
+                }
+            });
+        });
+    </script>
+</body></html>

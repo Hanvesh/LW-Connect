@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LW-Connect | Book Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-tint": "#565e74",
+                        "on-secondary-fixed": "#07006c",
+                        "tertiary-fixed-dim": "#4fdbc8",
+                        "on-primary-fixed": "#131b2e",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "secondary": "#4648d4",
+                        "tertiary-fixed": "#71f8e4",
+                        "surface-container": "#e5eeff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-fixed-variant": "#005048",
+                        "surface-bright": "#f8f9ff",
+                        "outline": "#76777d",
+                        "on-surface-variant": "#45464d",
+                        "tertiary-container": "#00201c",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-container": "#7c839b",
+                        "primary-fixed": "#dae2fd",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#e1e0ff",
+                        "secondary-container": "#6063ee",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#bec6e0",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-background": "#0b1c30",
+                        "tertiary": "#000000",
+                        "primary-container": "#131b2e",
+                        "background": "#f8f9ff",
+                        "surface": "#f8f9ff",
+                        "primary": "#000000",
+                        "outline-variant": "#c6c6cd",
+                        "on-surface": "#0b1c30",
+                        "primary-fixed-dim": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-fixed": "#00201c",
+                        "on-tertiary-container": "#009485",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xs": "4px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "xl": "32px",
+                        "margin-mobile": "16px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar (Shared Component Logic) -->
+<nav class="flex justify-between items-center h-16 px-margin-desktop ml-0 md:ml-64 bg-surface border-b border-outline-variant fixed top-0 left-0 right-0 z-40">
+<div class="flex items-center gap-lg">
+<span class="font-headline-md text-headline-md font-bold text-primary">LW-Connect</span>
+<div class="hidden md:flex items-center bg-surface-container-low px-md py-xs rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md ml-sm w-64" placeholder="Search innovation resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-sm hover:bg-surface-variant rounded-full transition-colors text-secondary">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component Logic) -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 py-lg bg-primary-container shadow-md z-50">
+<div class="px-lg mb-xl">
+<div class="font-headline-md text-headline-md font-bold text-on-primary">LW-Connect</div>
+<div class="text-on-primary-container text-label-sm opacity-80 uppercase tracking-widest mt-xs">Public Innovation Portal</div>
+</div>
+<div class="flex-1 space-y-xs">
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-md font-label-md style_universal_hover" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-md font-label-md style_universal_hover" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="school">school</span>
+                Courses
+            </a>
+<a class="flex items-center text-tertiary-fixed font-bold border-l-4 border-tertiary-fixed pl-4 py-md font-label-md bg-white/5" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="groups">groups</span>
+                Mentors
+            </a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-5 py-md font-label-md style_universal_hover" href="#">
+<span class="material-symbols-outlined mr-md" data-icon="analytics">analytics</span>
+                Analytics
+            </a>
+</div>
+<div class="px-lg mt-auto pt-lg border-t border-white/10">
+<button class="w-full bg-secondary text-on-secondary font-label-md py-md rounded-xl shadow-lg flex items-center justify-center gap-sm hover:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Book Session
+            </button>
+<div class="mt-lg space-y-sm">
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 font-label-sm" href="#">
+<span class="material-symbols-outlined mr-sm text-lg" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center text-on-primary-container hover:text-tertiary-fixed-dim pl-1 font-label-sm" href="#">
+<span class="material-symbols-outlined mr-sm text-lg" data-icon="help">help</span>
+                    Support
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 pb-32 px-margin-mobile md:px-margin-desktop min-h-screen">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<div class="mb-lg">
+<nav class="flex items-center gap-sm text-on-surface-variant text-label-md mb-xs">
+<span>Mentors</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-semibold">Book a Session</span>
+</nav>
+<h1 class="font-headline-lg text-headline-lg text-primary">Schedule your strategy session</h1>
+</div>
+<!-- Booking Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Mentor Profile Summary -->
+<div class="lg:col-span-4 space-y-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
+<div class="relative w-24 h-24 mx-auto mb-lg">
+<img alt="Dr. Sarah Chen" class="w-full h-full object-cover rounded-2xl" data-alt="A professional portrait of Dr. Sarah Chen, a middle-aged woman with a confident smile, wearing professional business attire. She is in a bright, modern office with soft daylight coming from a large window. The background is slightly blurred, showing architectural details of a municipal building. The image is clean, high-contrast, and embodies professional government leadership." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwuNrvUgBWgc4dSzutlEXc5yjN7SduPyOiMN8Ow_MdKXLYXxHOJsck7bLTK0SiPPPHb3zpUW0SjQziUG1bpTdtnLiuPPUpkrRvPSf9F8k53v5PIEryhzbR_LWNpAW-c_tge0JTc_bt1hD0DhjZJ4ZY_6PeCjAOut46DNx3ycbaZBKCqcY0LN2GzIzWXZAoAonpJpgxc1OaqwB3yXXZYMEVBQ7qnl2IKuR45At7sMbvLhO0y3WtCj2pqZf58ZeI44LhCf1Z_2RAr0A"/>
+<div class="absolute -bottom-2 -right-2 bg-tertiary-fixed text-on-tertiary-fixed p-1 rounded-full border-4 border-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="text-center mb-lg">
+<h2 class="font-title-lg text-title-lg text-on-surface">Dr. Sarah Chen</h2>
+<p class="text-on-surface-variant font-label-md">Municipal AI Lead, InnovateCity</p>
+</div>
+<div class="space-y-md">
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="event_note">event_note</span>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase">Session Type</p>
+<p class="text-label-md font-semibold">45-min Strategic Audit</p>
+</div>
+</div>
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" data-icon="forum">forum</span>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase">Language</p>
+<p class="text-label-md font-semibold">English, Mandarin</p>
+</div>
+</div>
+</div>
+<div class="mt-lg pt-lg border-t border-outline-variant">
+<h3 class="text-label-sm text-on-surface-variant uppercase mb-md">About Dr. Chen</h3>
+<p class="text-body-md text-on-surface-variant">
+                                15+ years leading digital transformation in municipal government. Specialized in AI ethics and public data infrastructure.
+                            </p>
+</div>
+</div>
+<!-- AI Assistant Tip -->
+<div class="bg-secondary-container text-on-secondary-container p-lg rounded-xl flex gap-md items-start border border-secondary/20 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 opacity-10 scale-150 translate-x-4 -translate-y-4">
+<span class="material-symbols-outlined text-display-lg" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<span class="material-symbols-outlined mt-1" data-icon="lightbulb">lightbulb</span>
+<div>
+<p class="font-label-md font-bold mb-xs">LW-Connect Insight</p>
+<p class="text-label-md opacity-90">Sarah's slots fill up 4 days in advance. We recommend booking a mid-week morning slot for her highest focus sessions.</p>
+</div>
+</div>
+</div>
+<!-- Right: Interactive Calendar & Slot Picker -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.06)] overflow-hidden">
+<div class="flex flex-col md:flex-row h-full">
+<!-- Calendar Part -->
+<div class="flex-1 p-lg md:border-r border-outline-variant">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-title-lg text-title-lg">Select Date</h3>
+<div class="flex items-center gap-xs">
+<button class="p-xs hover:bg-surface-variant rounded-md transition-colors"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<span class="text-label-md font-bold px-md">October 2024</span>
+<button class="p-xs hover:bg-surface-variant rounded-md transition-colors"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+<div class="calendar-grid text-center text-label-sm text-on-surface-variant font-bold mb-sm">
+<div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+</div>
+<div class="calendar-grid gap-y-xs">
+<!-- Placeholders for previous month -->
+<div class="p-md text-outline opacity-30">29</div>
+<div class="p-md text-outline opacity-30">30</div>
+<!-- Current Month -->
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">1</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">2</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">3</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">4</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">5</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">6</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">7</button>
+<button class="p-md rounded-lg bg-secondary text-on-secondary font-bold shadow-md text-label-md" id="selected-date">8</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">9</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">10</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">11</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">12</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">13</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">14</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">15</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">16</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">17</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">18</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">19</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">20</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">21</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">22</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">23</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">24</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">25</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">26</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">27</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">28</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">29</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">30</button>
+<button class="p-md rounded-lg hover:bg-surface-variant transition-colors text-label-md">31</button>
+</div>
+<div class="mt-lg pt-lg border-t border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs text-label-sm">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span>Selected</span>
+</div>
+<div class="flex items-center gap-xs text-label-sm">
+<div class="w-3 h-3 rounded-full border border-outline-variant"></div>
+<span>Available</span>
+</div>
+</div>
+<span class="text-label-sm text-on-surface-variant">Timezone: UTC-5 (EST)</span>
+</div>
+</div>
+<!-- Time Slot Part -->
+<div class="w-full md:w-80 p-lg bg-surface-container-low">
+<h3 class="font-title-lg text-title-lg mb-lg">Available Slots</h3>
+<div class="space-y-sm max-h-[400px] overflow-y-auto scrollbar-hide" id="slot-container">
+<button class="slot-btn w-full py-md px-lg bg-surface-container-lowest border border-outline-variant rounded-xl text-label-md font-bold text-center hover:border-secondary hover:text-secondary transition-all" onclick="selectSlot(this)">09:00 AM</button>
+<button class="slot-btn w-full py-md px-lg bg-surface-container-lowest border border-outline-variant rounded-xl text-label-md font-bold text-center hover:border-secondary hover:text-secondary transition-all" onclick="selectSlot(this)">10:30 AM</button>
+<button class="slot-btn w-full py-md px-lg bg-surface-container-lowest border border-outline-variant rounded-xl text-label-md font-bold text-center hover:border-secondary hover:text-secondary transition-all" onclick="selectSlot(this)">01:00 PM</button>
+<button class="slot-btn w-full py-md px-lg bg-surface-container-lowest border border-outline-variant rounded-xl text-label-md font-bold text-center hover:border-secondary hover:text-secondary transition-all" onclick="selectSlot(this)">02:45 PM</button>
+<button class="slot-btn w-full py-md px-lg bg-surface-container-lowest border border-outline-variant rounded-xl text-label-md font-bold text-center hover:border-secondary hover:text-secondary transition-all" onclick="selectSlot(this)">04:15 PM</button>
+<div class="opacity-40 py-md px-lg bg-surface-container-low border border-dashed border-outline rounded-xl text-label-md font-medium text-center line-through">05:30 PM (Reserved)</div>
+</div>
+<div class="mt-lg pt-lg border-t border-outline hidden animate-in fade-in slide-in-from-bottom-4 duration-300" id="confirmation-zone">
+<div class="bg-surface-container p-md rounded-lg mb-lg border border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase">Your Selection</p>
+<p class="text-label-md font-bold" id="selection-summary">Oct 8 • 01:00 PM</p>
+</div>
+<button class="w-full bg-primary text-on-primary py-lg rounded-xl font-bold text-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-lg active:scale-95 duration-150" onclick="confirmBooking()">
+                                    Confirm Booking
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Shared Component Logic) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container rounded-t-xl shadow-lg">
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="text-[10px] font-bold">Discover</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-4 py-1 -mt-4 shadow-xl">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-[10px] font-bold">AI</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-4 py-1">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="text-[10px] font-bold">Sessions</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</nav>
+<!-- Success Modal -->
+<div class="fixed inset-0 z-[60] hidden items-center justify-center bg-on-background/40 backdrop-blur-sm p-margin-mobile" id="success-modal">
+<div class="bg-surface-container-lowest p-xl rounded-3xl shadow-2xl max-w-sm w-full text-center border border-outline-variant scale-95 opacity-0 transition-all duration-300" id="modal-content">
+<div class="w-16 h-16 bg-tertiary-fixed text-on-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-lg">
+<span class="material-symbols-outlined text-[40px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-md text-headline-md mb-md">Session Confirmed</h2>
+<p class="text-body-md text-on-surface-variant mb-xl">Your strategy session with Dr. Sarah Chen is scheduled. An invite has been sent to your primary innovation email.</p>
+<button class="w-full bg-secondary text-on-secondary py-md rounded-xl font-bold" onclick="window.location.reload()">Done</button>
+</div>
+</div>
+<script>
+        function selectSlot(el) {
+            // UI state management
+            document.querySelectorAll('.slot-btn').forEach(btn => {
+                btn.classList.remove('bg-secondary', 'text-on-secondary', 'border-secondary', 'shadow-md');
+                btn.classList.add('bg-surface-container-lowest', 'text-on-surface');
+            });
+            
+            el.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+            el.classList.add('bg-secondary', 'text-on-secondary', 'border-secondary', 'shadow-md');
+
+            // Show confirmation zone
+            const confZone = document.getElementById('confirmation-zone');
+            const summary = document.getElementById('selection-summary');
+            
+            summary.innerText = `Oct 8 • ${el.innerText}`;
+            confZone.classList.remove('hidden');
+            confZone.classList.add('flex', 'flex-col');
+        }
+
+        function confirmBooking() {
+            const modal = document.getElementById('success-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+    </script>
+</body></html>

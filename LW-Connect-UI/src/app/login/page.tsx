@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { MaterialIcon } from '@/components/ui/material-icon'
 import { useAuthStore } from '@/store/auth.store'
 import { authService } from '@/services/api.service'
 import { getApiErrorMessage } from '@/lib/user-mapper'
@@ -40,10 +40,9 @@ export default function LoginPage() {
     }
   }
 
-  // Demo login
   const handleDemoLogin = (role: 'learner' | 'mentor' | 'admin') => {
     const demoUsers = {
-      learner: { id: '1', email: 'learner@demo.com', name: 'John Doe', role: 'learner' as const },
+      learner: { id: '1', email: 'learner@demo.com', name: 'Sarah Chen', role: 'learner' as const },
       mentor: { id: '2', email: 'mentor@demo.com', name: 'Dr. Sarah Johnson', role: 'mentor' as const },
       admin: { id: '3', email: 'admin@demo.com', name: 'Admin User', role: 'admin' as const },
     }
@@ -52,84 +51,88 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome to LW-Connect</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface p-margin-mobile">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-xl">
+          <Link href="/" className="inline-block">
+            <h1 className="text-headline-md font-bold text-primary">LW-Connect</h1>
+          </Link>
+          <p className="text-label-md text-on-surface-variant mt-sm">Public Innovation Portal</p>
+        </div>
+
+        <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-ambient p-xl">
+          <div className="text-center mb-lg">
+            <h2 className="text-title-lg font-bold">Welcome back</h2>
+            <p className="text-body-md text-on-surface-variant">Sign in to your account</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-md">
             <div>
+              <label className="text-label-md font-medium block mb-xs">Email</label>
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="you@agency.gov"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="bg-surface-container-low border-outline-variant rounded-lg focus:ring-secondary-container"
               />
             </div>
             <div>
+              <label className="text-label-md font-medium block mb-xs">Password</label>
               <Input
                 type="password"
-                placeholder="Password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="bg-surface-container-low border-outline-variant rounded-lg focus:ring-secondary-container"
               />
             </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-sm text-error">{error}</p>}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-lg">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-outline-variant" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Demo Access</span>
+                <span className="bg-surface-container-lowest px-sm text-on-surface-variant text-label-sm">Demo Access</span>
               </div>
             </div>
 
-            <div className="mt-4 space-y-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => handleDemoLogin('learner')}
-              >
-                Demo as Learner
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => handleDemoLogin('mentor')}
-              >
-                Demo as Mentor
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => handleDemoLogin('admin')}
-              >
-                Demo as Admin
-              </Button>
+            <div className="mt-md space-y-sm">
+              {(['learner', 'mentor', 'admin'] as const).map((role) => (
+                <Button
+                  key={role}
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => handleDemoLogin(role)}
+                >
+                  Demo as {role.charAt(0).toUpperCase() + role.slice(1)}
+                </Button>
+              ))}
             </div>
           </div>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-primary hover:underline">
+          <p className="text-center text-body-md text-on-surface-variant mt-lg">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="text-secondary hover:underline font-medium">
               Sign up
             </Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="mt-lg flex items-center justify-center gap-sm text-on-surface-variant">
+          <MaterialIcon name="verified_user" className="text-on-tertiary-container" />
+          <span className="text-label-sm">Government-grade security</span>
+        </div>
+      </div>
     </div>
   )
 }

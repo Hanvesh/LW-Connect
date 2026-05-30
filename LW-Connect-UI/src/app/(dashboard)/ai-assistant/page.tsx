@@ -27,7 +27,7 @@ export default function AIAssistantPage() {
 
   const handleSendMessage = async (message: string): Promise<AIMessage> => {
     const data = await aiService.chat(message, user?.id || 'anonymous', sessionId)
-    const nextSessionId = data.session_id ?? (data as any).sessionId
+    const nextSessionId = data.session_id ?? (data as { sessionId?: string }).sessionId
 
     if (nextSessionId) {
       setSessionId(nextSessionId)
@@ -43,14 +43,8 @@ export default function AIAssistantPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="p-8 border-b">
-        <h1 className="text-3xl font-bold">AI Assistant</h1>
-        <p className="text-muted-foreground">Get personalized recommendations and guidance</p>
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <AIAssistant onSendMessage={handleSendMessage} />
-      </div>
+    <div className="h-full flex flex-col overflow-hidden">
+      <AIAssistant onSendMessage={handleSendMessage} />
     </div>
   )
 }
