@@ -18,7 +18,7 @@ const learnerNav = [
 const mentorNav = [
   { name: 'Dashboard', href: '/mentor/dashboard', icon: 'dashboard' },
   { name: 'Sessions', href: '/mentor/sessions', icon: 'event_available' },
-  { name: 'Availability', href: '/mentor/availability', icon: 'settings' },
+  { name: 'Availability', href: '/mentor/availability', icon: 'schedule' },
   { name: 'Profile', href: '/mentor/profile', icon: 'person' },
 ]
 
@@ -71,12 +71,22 @@ export function Sidebar() {
       </nav>
 
       <div className="px-lg py-md border-t border-on-primary-container/20 space-y-md">
-        <Link
-          href="/mentors"
-          className="block w-full bg-secondary text-on-secondary-container py-sm rounded-lg text-label-md text-center hover:opacity-90 transition-opacity active:scale-95"
-        >
-          Book Session
-        </Link>
+        {user?.role === 'mentor' && (
+          <Link
+            href="/mentor/sessions"
+            className="block w-full bg-secondary text-on-secondary-container py-sm rounded-lg text-label-md text-center hover:opacity-90 transition-opacity active:scale-95"
+          >
+            Manage Sessions
+          </Link>
+        )}
+        {user?.role === 'learner' && (
+          <Link
+            href="/sessions"
+            className="block w-full bg-secondary text-on-secondary-container py-sm rounded-lg text-label-md text-center hover:opacity-90 transition-opacity active:scale-95"
+          >
+            My Sessions
+          </Link>
+        )}
         <div className="space-y-sm">
           <button
             onClick={handleLogout}

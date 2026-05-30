@@ -85,14 +85,7 @@ export default function DashboardPage() {
                   <MaterialIcon name="videocam" filled />
                   Join Now
                 </a>
-              ) : (
-                <Link
-                  href="/mentors"
-                  className="bg-secondary text-on-secondary-container px-lg py-sm rounded-lg text-label-md hover:opacity-90 transition-opacity"
-                >
-                  Book Session
-                </Link>
-              )}
+              ) : null}
               <Link
                 href="/sessions"
                 className="border border-outline-variant text-on-primary px-lg py-sm rounded-lg text-label-md hover:bg-white/10 transition-colors"

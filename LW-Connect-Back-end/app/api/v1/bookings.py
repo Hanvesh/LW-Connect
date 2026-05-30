@@ -9,7 +9,7 @@ from app.core.security import get_current_user, require_role
 from app.services.booking_service import BookingService
 from app.repositories.learner_repository import LearnerRepository
 from app.repositories.mentor_repository import MentorRepository
-from app.schemas.booking import BookingCreate, BookingUpdate, BookingResponse, FeedbackCreate, FeedbackResponse
+from app.schemas.booking import BookingCreate, BookingUpdate, BookingResponse, FeedbackCreate, FeedbackResponse, MentorBookingCreate
 from app.models.booking import BookingStatus
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
@@ -42,6 +42,40 @@ async def list_my_bookings(
     
     booking_service = BookingService(db)
     return await booking_service.list_learner_bookings(learner.id, skip, limit)
+
+
+@router.post("/mentor/create", response_model=BookingResponse, status_code=201)
+async def mentor_create_booking(
+    booking_data: MentorBookingCreate,
+    current_user = Depends(require_role("mentor")),
+    db: AsyncSession = Depends(get_db)
+):
+    """Mentor creates a session for a learner."""
+    mentor_repo = MentorRepository(db)
+    mentor = await mentor_repo.get_by_user_id(current_user.id)
+    if not mentor:
+        raise HTTPException(status_code=404, detail="Mentor profile not found")
+
+    learner_repo = LearnerRepository(db)
+    learner = await learner_repo.get_by_user_id(booking_data.learner_id)
+    if not learner:
+        raise HTTPException(status_code=404, detail="Learner not found")
+
+    booking_service = BookingService(db)
+    create_data = BookingCreate(
+        mentor_id=mentor.id,
+        scheduled_at=booking_data.scheduled_at,
+        duration_minutes=booking_data.duration_minutes,
+        notes=booking_data.notes,
+    )
+    booking = await booking_service.create_booking(learner.id, create_data)
+
+    # If meeting URL provided, confirm immediately
+    if booking_data.meeting_url:
+        update_data = BookingUpdate(meeting_url=booking_data.meeting_url, status=BookingStatus.CONFIRMED)
+        booking = await booking_service.update_booking(booking.id, update_data)
+
+    return booking
 
 
 @router.get("/mentor/my-bookings", response_model=List[BookingResponse])

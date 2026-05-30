@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
 import { MaterialIcon } from '@/components/ui/material-icon'
 import { sessionService } from '@/services/api.service'
 import { Loading } from '@/components/ui/loading'
@@ -140,18 +139,9 @@ export default function SessionsPage() {
   return (
     <div className="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto space-y-gutter pb-32 md:pb-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-headline-lg text-primary">My Sessions</h1>
-          <p className="text-body-md text-on-surface-variant">View and manage your mentorship sessions</p>
-        </div>
-        <Link
-          href="/mentors"
-          className="bg-secondary text-on-secondary px-lg py-sm rounded-lg text-label-md font-bold hover:opacity-90 transition-opacity active:scale-95 duration-150 flex items-center gap-sm"
-        >
-          <MaterialIcon name="add" />
-          Book Session
-        </Link>
+      <div>
+        <h1 className="text-headline-lg text-primary">My Sessions</h1>
+        <p className="text-body-md text-on-surface-variant">View and join your mentorship sessions</p>
       </div>
 
       {error && (
@@ -323,14 +313,7 @@ export default function SessionsPage() {
             <MaterialIcon name="event_available" className="!text-[40px] text-on-surface-variant" />
           </div>
           <h3 className="text-title-lg text-on-surface mb-sm">No sessions yet</h3>
-          <p className="text-body-md text-on-surface-variant mb-lg">Book a session with a mentor to get started</p>
-          <Link
-            href="/mentors"
-            className="inline-flex items-center gap-sm bg-secondary text-on-secondary px-xl py-md rounded-xl font-bold text-label-md hover:opacity-90 transition-opacity active:scale-95 duration-150"
-          >
-            <MaterialIcon name="groups" />
-            Browse Mentors
-          </Link>
+          <p className="text-body-md text-on-surface-variant">Your mentor will schedule sessions for you. Check back soon!</p>
         </div>
       )}
 

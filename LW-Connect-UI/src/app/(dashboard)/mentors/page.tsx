@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MentorCard } from '@/components/features/mentor-card'
@@ -11,7 +10,6 @@ import { Mentor } from '@/types'
 import { Loading } from '@/components/ui/loading'
 
 export default function MentorsPage() {
-  const router = useRouter()
   const [mentors, setMentors] = useState<Mentor[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +19,7 @@ export default function MentorsPage() {
       const mapped: Mentor[] = (data || []).map((m: any) => ({
         id: m.id,
         name: m.name || m.full_name || '',
-        title: m.title || m.specialization || '',
+        title: m.title || m.job_title || m.specialization || '',
         expertise: m.expertise || m.skills || [],
         bio: m.bio || '',
         rating: m.rating ?? 0,
@@ -41,10 +39,6 @@ export default function MentorsPage() {
     mentor.expertise.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
-  const handleBook = (mentor: Mentor) => {
-    router.push(`/mentors/${mentor.id}/book`)
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -56,8 +50,8 @@ export default function MentorsPage() {
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Find Mentors</h1>
-        <p className="text-muted-foreground">Connect with experienced professionals</p>
+        <h1 className="text-3xl font-bold">Mentors</h1>
+        <p className="text-muted-foreground">Browse available mentors in the program</p>
       </div>
 
       {/* Search and Filters */}
@@ -80,7 +74,7 @@ export default function MentorsPage() {
       {/* Mentors Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredMentors.map((mentor) => (
-          <MentorCard key={mentor.id} mentor={mentor} onBook={handleBook} />
+          <MentorCard key={mentor.id} mentor={mentor} />
         ))}
       </div>
 

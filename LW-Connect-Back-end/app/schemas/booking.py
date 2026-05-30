@@ -19,6 +19,15 @@ class BookingCreate(BookingBase):
     mentor_id: UUID
 
 
+class MentorBookingCreate(BaseModel):
+    """Schema for mentor creating a session for a learner."""
+    learner_id: UUID
+    scheduled_at: datetime
+    duration_minutes: int = 60
+    notes: Optional[str] = None
+    meeting_url: Optional[str] = None
+
+
 class BookingUpdate(BaseModel):
     """Booking update schema."""
     scheduled_at: Optional[datetime] = None

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { MaterialIcon } from '@/components/ui/material-icon'
 import { sessionService } from '@/services/api.service'
 import { Loading } from '@/components/ui/loading'
+import api from '@/lib/api'
 
 interface MentorBooking {
   id: string
@@ -13,7 +14,14 @@ interface MentorBooking {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
   meeting_url?: string
   notes?: string
+  mentor_name?: string
   feedback?: { id: string; rating: number; comment?: string }
+}
+
+interface LearnerOption {
+  id: string
+  full_name: string
+  email: string
 }
 
 function isSessionExpired(scheduledAt: string, durationMinutes: number): boolean {
@@ -37,6 +45,16 @@ export default function MentorSessionsPage() {
   const [meetingLinkInput, setMeetingLinkInput] = useState<Record<string, string>>({})
   const [savingId, setSavingId] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [showCreateForm, setShowCreateForm] = useState(false)
+
+  // Create session form state
+  const [learners, setLearners] = useState<LearnerOption[]>([])
+  const [selectedLearnerId, setSelectedLearnerId] = useState('')
+  const [sessionDate, setSessionDate] = useState('')
+  const [sessionTime, setSessionTime] = useState('')
+  const [sessionMeetingUrl, setSessionMeetingUrl] = useState('')
+  const [sessionNotes, setSessionNotes] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
 
   const loadBookings = useCallback(async () => {
     try {
@@ -52,6 +70,55 @@ export default function MentorSessionsPage() {
   useEffect(() => {
     loadBookings()
   }, [loadBookings])
+
+  const loadLearners = async () => {
+    try {
+      const { data } = await api.get('/users', { params: { role: 'learner' } })
+      setLearners((data || []).filter((u: any) => u.role === 'learner').map((u: any) => ({
+        id: u.id,
+        full_name: u.full_name,
+        email: u.email,
+      })))
+    } catch {
+      setLearners([])
+    }
+  }
+
+  const handleOpenCreate = () => {
+    setShowCreateForm(true)
+    loadLearners()
+  }
+
+  const handleCreateSession = async () => {
+    if (!selectedLearnerId || !sessionDate || !sessionTime) return
+    setIsCreating(true)
+    setError('')
+    try {
+      const scheduledAt = `${sessionDate}T${sessionTime}:00`
+      // Create booking via mentor-specific endpoint
+      const { data } = await api.post('/bookings/mentor/create', {
+        learner_id: selectedLearnerId,
+        scheduled_at: scheduledAt,
+        meeting_url: sessionMeetingUrl || undefined,
+        notes: sessionNotes || undefined,
+      })
+      // If meeting URL provided, also set it to confirm
+      if (sessionMeetingUrl && data?.id) {
+        await sessionService.setMeetingLink(data.id, sessionMeetingUrl)
+      }
+      setShowCreateForm(false)
+      setSelectedLearnerId('')
+      setSessionDate('')
+      setSessionTime('')
+      setSessionMeetingUrl('')
+      setSessionNotes('')
+      await loadBookings()
+    } catch {
+      setError('Failed to create session. Please try again.')
+    } finally {
+      setIsCreating(false)
+    }
+  }
 
   const handleSetMeetingLink = async (bookingId: string) => {
     const url = meetingLinkInput[bookingId]?.trim()
@@ -97,9 +164,19 @@ export default function MentorSessionsPage() {
 
   return (
     <div className="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto space-y-gutter pb-32 md:pb-8">
-      <div>
-        <h1 className="text-headline-lg text-primary">My Sessions</h1>
-        <p className="text-body-md text-on-surface-variant">Manage your mentorship sessions and add meeting links</p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-headline-lg text-primary">My Sessions</h1>
+          <p className="text-body-md text-on-surface-variant">Schedule and manage mentorship sessions</p>
+        </div>
+        <button
+          onClick={handleOpenCreate}
+          className="bg-secondary text-on-secondary px-lg py-sm rounded-lg text-label-md font-bold hover:opacity-90 transition-opacity active:scale-95 duration-150 flex items-center gap-sm"
+        >
+          <MaterialIcon name="add" />
+          Create Session
+        </button>
       </div>
 
       {error && (
@@ -109,6 +186,95 @@ export default function MentorSessionsPage() {
         </div>
       )}
 
+      {/* Create Session Form */}
+      {showCreateForm && (
+        <div className="bg-surface-container-lowest border-2 border-secondary/30 rounded-xl p-lg shadow-md space-y-md">
+          <div className="flex items-center justify-between">
+            <h3 className="text-title-lg flex items-center gap-sm">
+              <MaterialIcon name="event_note" className="text-secondary" />
+              Schedule New Session
+            </h3>
+            <button onClick={() => setShowCreateForm(false)} className="p-xs hover:bg-surface-variant rounded-md">
+              <MaterialIcon name="close" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
+            <div>
+              <label className="text-label-sm text-on-surface-variant uppercase block mb-xs">Learner</label>
+              <select
+                value={selectedLearnerId}
+                onChange={(e) => setSelectedLearnerId(e.target.value)}
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm text-body-md focus:ring-2 focus:ring-secondary outline-none"
+              >
+                <option value="">Select a learner...</option>
+                {learners.map((l) => (
+                  <option key={l.id} value={l.id}>{l.full_name} ({l.email})</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-label-sm text-on-surface-variant uppercase block mb-xs">Date</label>
+              <input
+                type="date"
+                value={sessionDate}
+                onChange={(e) => setSessionDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm text-body-md focus:ring-2 focus:ring-secondary outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-label-sm text-on-surface-variant uppercase block mb-xs">Time</label>
+              <input
+                type="time"
+                value={sessionTime}
+                onChange={(e) => setSessionTime(e.target.value)}
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm text-body-md focus:ring-2 focus:ring-secondary outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-label-sm text-on-surface-variant uppercase block mb-xs">Google Meet Link</label>
+              <input
+                type="url"
+                value={sessionMeetingUrl}
+                onChange={(e) => setSessionMeetingUrl(e.target.value)}
+                placeholder="https://meet.google.com/abc-defg-hij"
+                className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm text-body-md focus:ring-2 focus:ring-secondary outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-label-sm text-on-surface-variant uppercase block mb-xs">Notes (optional)</label>
+            <input
+              type="text"
+              value={sessionNotes}
+              onChange={(e) => setSessionNotes(e.target.value)}
+              placeholder="Session topic or agenda..."
+              className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm text-body-md focus:ring-2 focus:ring-secondary outline-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-sm pt-sm">
+            <button
+              onClick={() => setShowCreateForm(false)}
+              className="px-lg py-sm border border-outline-variant rounded-lg text-label-md hover:bg-surface-container transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateSession}
+              disabled={!selectedLearnerId || !sessionDate || !sessionTime || isCreating}
+              className="bg-primary text-on-primary px-lg py-sm rounded-lg text-label-md font-bold hover:opacity-90 transition-opacity disabled:opacity-40 flex items-center gap-sm"
+            >
+              <MaterialIcon name="check" />
+              {isCreating ? 'Creating...' : 'Create Session'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Session Cards */}
       <div className="space-y-md">
         {sortedBookings.map((booking) => {
           const expired = isSessionExpired(booking.scheduled_at, booking.duration_minutes)
@@ -165,6 +331,10 @@ export default function MentorSessionsPage() {
                     {isCancelled ? 'Cancelled' : isCompleted ? 'Completed' : expired ? 'Expired' : booking.status}
                   </span>
                 </div>
+
+                {booking.notes && (
+                  <p className="text-body-md text-on-surface-variant">{booking.notes}</p>
+                )}
 
                 {/* Meeting link display */}
                 {booking.meeting_url && (
@@ -235,13 +405,20 @@ export default function MentorSessionsPage() {
         })}
       </div>
 
-      {bookings.length === 0 && !error && (
+      {bookings.length === 0 && !error && !showCreateForm && (
         <div className="text-center py-20">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-surface-container mb-lg">
             <MaterialIcon name="event_available" className="!text-[40px] text-on-surface-variant" />
           </div>
           <h3 className="text-title-lg text-on-surface mb-sm">No sessions yet</h3>
-          <p className="text-body-md text-on-surface-variant">Learners will book sessions with you from the mentors page.</p>
+          <p className="text-body-md text-on-surface-variant mb-lg">Create your first session to get started</p>
+          <button
+            onClick={handleOpenCreate}
+            className="inline-flex items-center gap-sm bg-secondary text-on-secondary px-xl py-md rounded-xl font-bold text-label-md hover:opacity-90 transition-opacity active:scale-95 duration-150"
+          >
+            <MaterialIcon name="add" />
+            Create Session
+          </button>
         </div>
       )}
     </div>

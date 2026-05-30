@@ -16,7 +16,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def list_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
-    current_user = Depends(require_role("admin")),
+    current_user = Depends(require_role("admin", "mentor")),
     db: AsyncSession = Depends(get_db)
 ):
     """List all users."""
