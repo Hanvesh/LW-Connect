@@ -1,33 +1,56 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MentorCard } from '@/components/features/mentor-card'
-import { BookingModal } from '@/components/features/booking-modal'
 import { Search, Filter } from 'lucide-react'
-import { mockMentors } from '@/lib/mock-data'
+import { mentorService } from '@/services/api.service'
 import { Mentor } from '@/types'
+import { Loading } from '@/components/ui/loading'
 
 export default function MentorsPage() {
+  const router = useRouter()
+  const [mentors, setMentors] = useState<Mentor[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null)
-  const [isBookingOpen, setIsBookingOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const filteredMentors = mockMentors.filter(mentor =>
+  useEffect(() => {
+    mentorService.getMentors().then((data) => {
+      const mapped: Mentor[] = (data || []).map((m: any) => ({
+        id: m.id,
+        name: m.name || m.full_name || '',
+        title: m.title || m.specialization || '',
+        expertise: m.expertise || m.skills || [],
+        bio: m.bio || '',
+        rating: m.rating ?? 0,
+        totalSessions: m.total_sessions ?? 0,
+        availability: m.availability || '',
+        isAvailable: m.is_available ?? true,
+      }))
+      setMentors(mapped)
+    }).catch(() => {
+      setMentors([])
+    }).finally(() => setIsLoading(false))
+  }, [])
+
+  const filteredMentors = mentors.filter(mentor =>
     mentor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     mentor.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     mentor.expertise.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   const handleBook = (mentor: Mentor) => {
-    setSelectedMentor(mentor)
-    setIsBookingOpen(true)
+    router.push(`/mentors/${mentor.id}/book`)
   }
 
-  const handleConfirmBooking = (date: string, time: string) => {
-    console.log('Booking confirmed:', { mentor: selectedMentor, date, time })
-    // In production, call API here
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loading />
+      </div>
+    )
   }
 
   return (
@@ -66,13 +89,6 @@ export default function MentorsPage() {
           <p className="text-muted-foreground">No mentors found matching your search</p>
         </div>
       )}
-
-      <BookingModal
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        mentor={selectedMentor}
-        onConfirm={handleConfirmBooking}
-      />
     </div>
   )
 }

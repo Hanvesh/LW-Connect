@@ -57,12 +57,29 @@ export const sessionService = {
     return data
   },
 
+  getMentorBookings: async () => {
+    const { data } = await api.get('/bookings/mentor/my-bookings')
+    return data
+  },
+
   bookSession: async (mentorId: string, scheduledAt: string, notes?: string) => {
     const { data } = await api.post('/bookings', {
       mentor_id: mentorId,
       scheduled_at: scheduledAt,
       notes,
     })
+    return data
+  },
+
+  setMeetingLink: async (bookingId: string, meetingUrl: string) => {
+    const { data } = await api.put(`/bookings/${bookingId}/meeting-link`, null, {
+      params: { meeting_url: meetingUrl },
+    })
+    return data
+  },
+
+  updateBooking: async (bookingId: string, updates: Record<string, unknown>) => {
+    const { data } = await api.put(`/bookings/${bookingId}`, updates)
     return data
   },
 

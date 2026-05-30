@@ -10,6 +10,7 @@ from app.services.booking_service import BookingService
 from app.repositories.learner_repository import LearnerRepository
 from app.repositories.mentor_repository import MentorRepository
 from app.schemas.booking import BookingCreate, BookingUpdate, BookingResponse, FeedbackCreate, FeedbackResponse
+from app.models.booking import BookingStatus
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
@@ -26,41 +27,6 @@ async def create_booking(
     
     booking_service = BookingService(db)
     return await booking_service.create_booking(learner.id, booking_data)
-
-
-@router.get("/{booking_id}", response_model=BookingResponse)
-async def get_booking(
-    booking_id: UUID,
-    current_user = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """Get booking by ID."""
-    booking_service = BookingService(db)
-    return await booking_service.get_booking(booking_id)
-
-
-@router.put("/{booking_id}", response_model=BookingResponse)
-async def update_booking(
-    booking_id: UUID,
-    booking_data: BookingUpdate,
-    current_user = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """Update booking."""
-    booking_service = BookingService(db)
-    return await booking_service.update_booking(booking_id, booking_data)
-
-
-@router.post("/{booking_id}/cancel", response_model=BookingResponse)
-async def cancel_booking(
-    booking_id: UUID,
-    reason: str,
-    current_user = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """Cancel a booking."""
-    booking_service = BookingService(db)
-    return await booking_service.cancel_booking(booking_id, reason)
 
 
 @router.get("/learner/my-bookings", response_model=List[BookingResponse])
@@ -107,3 +73,51 @@ async def create_feedback(
 
     booking_service = BookingService(db)
     return await booking_service.create_feedback(feedback_data, learner.id)
+
+
+@router.get("/{booking_id}", response_model=BookingResponse)
+async def get_booking(
+    booking_id: UUID,
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Get booking by ID."""
+    booking_service = BookingService(db)
+    return await booking_service.get_booking(booking_id)
+
+
+@router.put("/{booking_id}", response_model=BookingResponse)
+async def update_booking(
+    booking_id: UUID,
+    booking_data: BookingUpdate,
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Update booking."""
+    booking_service = BookingService(db)
+    return await booking_service.update_booking(booking_id, booking_data)
+
+
+@router.post("/{booking_id}/cancel", response_model=BookingResponse)
+async def cancel_booking(
+    booking_id: UUID,
+    reason: str,
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Cancel a booking."""
+    booking_service = BookingService(db)
+    return await booking_service.cancel_booking(booking_id, reason)
+
+
+@router.put("/{booking_id}/meeting-link", response_model=BookingResponse)
+async def set_meeting_link(
+    booking_id: UUID,
+    meeting_url: str,
+    current_user = Depends(require_role("mentor", "admin")),
+    db: AsyncSession = Depends(get_db)
+):
+    """Set meeting link for a booking (mentor action)."""
+    booking_service = BookingService(db)
+    booking_data = BookingUpdate(meeting_url=meeting_url, status=BookingStatus.CONFIRMED)
+    return await booking_service.update_booking(booking_id, booking_data)

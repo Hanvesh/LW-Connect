@@ -11,7 +11,7 @@ interface BookingModalProps {
   isOpen: boolean
   onClose: () => void
   mentor: Mentor | null
-  onConfirm: (date: string, time: string) => void
+  onConfirm: (date: string, time: string) => void | Promise<void>
 }
 
 const timeSlots = [
@@ -30,12 +30,21 @@ export function BookingModal({ isOpen, onClose, mentor, onConfirm }: BookingModa
     }
   })
 
-  const handleConfirm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleConfirm = async () => {
     if (selectedDate && selectedTime) {
-      onConfirm(selectedDate, selectedTime)
-      setSelectedDate('')
-      setSelectedTime('')
-      onClose()
+      setIsSubmitting(true)
+      try {
+        await onConfirm(selectedDate, selectedTime)
+        setSelectedDate('')
+        setSelectedTime('')
+        onClose()
+      } catch {
+        // error handled by parent
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -109,10 +118,10 @@ export function BookingModal({ isOpen, onClose, mentor, onConfirm }: BookingModa
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={!selectedDate || !selectedTime}
+            disabled={!selectedDate || !selectedTime || isSubmitting}
             className="flex-1"
           >
-            Confirm Booking
+            {isSubmitting ? 'Booking...' : 'Confirm Booking'}
           </Button>
         </div>
       </div>

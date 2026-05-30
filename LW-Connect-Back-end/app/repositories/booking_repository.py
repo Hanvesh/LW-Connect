@@ -25,12 +25,19 @@ class BookingRepository:
         )
         self.db.add(booking)
         await self.db.commit()
-        await self.db.refresh(booking)
-        return booking
+        # Re-fetch with relationships loaded
+        return await self.get_by_id(booking.id)
     
     async def get_by_id(self, booking_id: UUID) -> Optional[Booking]:
         """Get booking by ID."""
-        result = await self.db.execute(select(Booking).where(Booking.id == booking_id))
+        result = await self.db.execute(
+            select(Booking)
+            .options(
+                selectinload(Booking.feedback),
+                selectinload(Booking.mentor).selectinload(Mentor.user),
+            )
+            .where(Booking.id == booking_id)
+        )
         return result.scalar_one_or_none()
     
     async def update(self, booking_id: UUID, booking_data: BookingUpdate) -> Optional[Booking]:
@@ -43,8 +50,7 @@ class BookingRepository:
             setattr(booking, key, value)
         
         await self.db.commit()
-        await self.db.refresh(booking)
-        return booking
+        return await self.get_by_id(booking_id)
     
     async def list_by_learner(self, learner_id: UUID, skip: int = 0, limit: int = 100) -> List[Booking]:
         """List bookings by learner."""

@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { MaterialIcon } from '@/components/ui/material-icon'
-import { mockSessions, mockMentors, mockCourses } from '@/lib/mock-data'
+import { mockMentors, mockCourses } from '@/lib/mock-data'
 import { useAuthStore } from '@/store/auth.store'
+import { sessionService } from '@/services/api.service'
 
 const COURSE_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuB57XpIhtAdRi15ajb0C-zsE9YtsNn6tg3lj6fj0gbPPBW8d22hnE4FBkKy-0_eVhYu3SMzrLm5pqdr1snto17Jo22y8VIxmTKNefmE8Uigx7FBKa-OFNrsC9II0pGzjr9_4ZID-5xB46yfczQxu9cLRJHPIMJaA822kAn-O779mGQym93z09muYXxEKWNimd9ZnrcB6PQfoQ5aAKqfbLs3UgOBakHtt1UVptJUpmrFp_GJFpcxHqZignKFp9hxlXgMK2wI1PwSgJ4'
@@ -13,6 +15,15 @@ const MENTOR_IMAGES = [
   'https://lh3.googleusercontent.com/aida-public/AB6AXuAm3fbiVqBHLbeyP0H2mY90Ev6vBafCnHfsnOJxrV1XKZDgaddkNgwVddh96ThAt5bHvTzSRvUg-EyHxZQxM3bh8u38Q9YKK712kfF-Hnn_2t2hD3FWL1aCd7WD7YoXejYXza4cOm7INTKOD5uWRubQoEsdb8km5PP2y0PEnoY58yVFjO9JUnNDVU5xGCbe3K_SL-rW-QeMlz6PC7LDODfZNhX-IgRslv1q4VhYWsFlV9oeMTaKkTjSsMO2ARGsY-aoUiMGh8TEbxo',
 ]
 
+interface BookingItem {
+  id: string
+  mentor_name?: string
+  scheduled_at: string
+  duration_minutes: number
+  status: string
+  meeting_url?: string
+}
+
 function formatSessionDate(dateStr: string) {
   const date = new Date(dateStr)
   return {
@@ -21,12 +32,27 @@ function formatSessionDate(dateStr: string) {
   }
 }
 
+function formatSessionTime(dateStr: string) {
+  return new Date(dateStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+}
+
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user)
   const firstName = user?.name?.split(' ')[0] || 'there'
-  const upcomingSessions = mockSessions.filter((s) => s.status === 'scheduled')
+  const [upcomingSessions, setUpcomingSessions] = useState<BookingItem[]>([])
   const recommendedMentors = mockMentors.slice(0, 2)
   const currentCourse = mockCourses[1]
+
+  useEffect(() => {
+    if (user?.role === 'learner') {
+      sessionService.getMyBookings().then((data: BookingItem[]) => {
+        const upcoming = (data || []).filter(
+          (b) => b.status === 'pending' || b.status === 'confirmed'
+        )
+        setUpcomingSessions(upcoming)
+      }).catch(() => setUpcomingSessions([]))
+    }
+  }, [user])
 
   return (
     <div className="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto space-y-gutter">
@@ -35,10 +61,13 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-lg">
           <div className="space-y-sm">
             <h2 className="text-headline-lg">Welcome back, {firstName}.</h2>
-            {upcomingSessions.length > 0 ? (
+            {upcomingSessions.length > 0 && upcomingSessions[0].meeting_url ? (
               <p className="text-body-lg text-primary-fixed">
-                Your next session &quot;{upcomingSessions[0].mentorName}&quot; is in{' '}
-                <span className="text-tertiary-fixed font-bold">2 hours</span>.
+                Your next session with &quot;{upcomingSessions[0].mentor_name || 'Mentor'}&quot; is ready to join.
+              </p>
+            ) : upcomingSessions.length > 0 ? (
+              <p className="text-body-lg text-primary-fixed">
+                Your next session with &quot;{upcomingSessions[0].mentor_name || 'Mentor'}&quot; is coming up.
               </p>
             ) : (
               <p className="text-body-lg text-primary-fixed">
@@ -46,17 +75,29 @@ export default function DashboardPage() {
               </p>
             )}
             <div className="flex gap-md pt-md flex-wrap">
-              <Link
-                href="/sessions"
-                className="bg-secondary text-on-secondary-container px-lg py-sm rounded-lg text-label-md hover:opacity-90 transition-opacity"
-              >
-                Join Now
-              </Link>
+              {upcomingSessions.length > 0 && upcomingSessions[0].meeting_url ? (
+                <a
+                  href={upcomingSessions[0].meeting_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-secondary text-on-secondary-container px-lg py-sm rounded-lg text-label-md hover:opacity-90 transition-opacity flex items-center gap-sm"
+                >
+                  <MaterialIcon name="videocam" filled />
+                  Join Now
+                </a>
+              ) : (
+                <Link
+                  href="/mentors"
+                  className="bg-secondary text-on-secondary-container px-lg py-sm rounded-lg text-label-md hover:opacity-90 transition-opacity"
+                >
+                  Book Session
+                </Link>
+              )}
               <Link
                 href="/sessions"
                 className="border border-outline-variant text-on-primary px-lg py-sm rounded-lg text-label-md hover:bg-white/10 transition-colors"
               >
-                Reschedule
+                View Sessions
               </Link>
             </div>
           </div>
@@ -158,7 +199,7 @@ export default function DashboardPage() {
             <div className="space-y-md">
               {upcomingSessions.length > 0 ? (
                 upcomingSessions.slice(0, 2).map((session, index) => {
-                  const { month, day } = formatSessionDate(session.date)
+                  const { month, day } = formatSessionDate(session.scheduled_at)
                   return (
                     <div
                       key={session.id}
@@ -173,11 +214,11 @@ export default function DashboardPage() {
                         <span className="text-headline-md leading-none">{day}</span>
                       </div>
                       <div className="flex-1">
-                        <h6 className="text-label-md font-bold">{session.mentorName}</h6>
+                        <h6 className="text-label-md font-bold">{session.mentor_name || 'Mentor'}</h6>
                         <p className="text-label-sm text-on-surface-variant">Mentorship Session</p>
                         <p className={`text-label-sm mt-1 flex items-center gap-1 ${index === 0 ? 'text-secondary' : 'text-on-surface-variant'}`}>
                           <MaterialIcon name="schedule" className="text-xs" />
-                          {session.time}
+                          {formatSessionTime(session.scheduled_at)}
                         </p>
                       </div>
                     </div>

@@ -51,7 +51,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       return
     }
 
-    if (pathname.startsWith('/mentor') && user.role !== 'mentor' && user.role !== 'admin') {
+    if (pathname.startsWith('/mentor/') && user.role !== 'mentor' && user.role !== 'admin') {
       router.push('/dashboard')
     }
   }, [user, pathname, router, isCheckingAuth])
