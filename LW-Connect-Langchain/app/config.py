@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     llm_provider: str = "ollama"
     ollama_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "llama2"
+    ollama_embedding_model: str = "nomic-embed-text"
 
     # Safety
     enable_moderation: bool = True
