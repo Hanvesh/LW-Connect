@@ -29,3 +29,4 @@ class Course(Base):
     
     # Relationships
     cohorts = relationship("Cohort", back_populates="course")
+    pathways = relationship("Pathway", secondary="pathway_courses", back_populates="courses")

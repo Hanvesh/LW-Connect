@@ -33,3 +33,4 @@ class User(Base):
     # Relationships
     learner_profile = relationship("Learner", back_populates="user", uselist=False, cascade="all, delete-orphan")
     mentor_profile = relationship("Mentor", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")

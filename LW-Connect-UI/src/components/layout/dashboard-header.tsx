@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { MaterialIcon } from '@/components/ui/material-icon'
 import { useAuthStore } from '@/store/auth.store'
+import { NotificationBell } from './notification-bell'
 
 export function DashboardHeader() {
   const user = useAuthStore((state) => state.user)
@@ -23,9 +24,7 @@ export function DashboardHeader() {
         </div>
       </div>
       <div className="flex items-center gap-lg ml-lg shrink-0">
-        <button className="text-on-surface-variant hover:text-primary transition-opacity" aria-label="Notifications">
-          <MaterialIcon name="notifications" />
-        </button>
+        <NotificationBell />
         <Link
           href="/ai-assistant"
           className="text-on-surface-variant hover:text-primary transition-opacity"

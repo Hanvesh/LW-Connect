@@ -6,6 +6,7 @@ import { MaterialIcon } from '@/components/ui/material-icon'
 import { mockMentors, mockCourses } from '@/lib/mock-data'
 import { useAuthStore } from '@/store/auth.store'
 import { sessionService } from '@/services/api.service'
+import { AIRecommendations } from '@/components/features/ai-recommendations'
 
 const COURSE_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuB57XpIhtAdRi15ajb0C-zsE9YtsNn6tg3lj6fj0gbPPBW8d22hnE4FBkKy-0_eVhYu3SMzrLm5pqdr1snto17Jo22y8VIxmTKNefmE8Uigx7FBKa-OFNrsC9II0pGzjr9_4ZID-5xB46yfczQxu9cLRJHPIMJaA822kAn-O779mGQym93z09muYXxEKWNimd9ZnrcB6PQfoQ5aAKqfbLs3UgOBakHtt1UVptJUpmrFp_GJFpcxHqZignKFp9hxlXgMK2wI1PwSgJ4'
@@ -138,38 +139,13 @@ export default function DashboardPage() {
           </div>
 
           {/* AI Recommendations */}
-          <div className="ai-glow bg-surface-container-lowest rounded-xl p-lg space-y-lg relative overflow-hidden">
-            <div className="flex items-center gap-sm mb-md">
-              <MaterialIcon name="auto_awesome" filled className="text-secondary" />
-              <h3 className="text-title-lg">AI Mentor Recommendations</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
-              {recommendedMentors.map((mentor, index) => (
-                <Link
-                  key={mentor.id}
-                  href="/mentors"
-                  className="glass-card p-md rounded-xl border border-outline-variant flex items-center gap-md hover:shadow-md transition-all cursor-pointer"
-                >
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-secondary/20 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={mentor.name}
-                      className="w-full h-full object-cover"
-                      src={MENTOR_IMAGES[index] || MENTOR_IMAGES[0]}
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-xs">
-                      <h5 className="text-label-md font-bold">{mentor.name}</h5>
-                      <MaterialIcon name="verified" filled className="text-secondary text-sm" />
-                    </div>
-                    <p className="text-label-sm text-on-surface-variant">{mentor.title}</p>
-                    <p className="text-label-sm text-secondary mt-1">{98 - index * 3}% Match for your path</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+          {user?.id && (
+            <AIRecommendations 
+              userId={user.id.toString()} 
+              skills={user.skills || []} 
+              type="mentors" 
+            />
+          )}
         </div>
 
         {/* Right Column */}

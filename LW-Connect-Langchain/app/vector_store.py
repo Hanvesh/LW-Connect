@@ -107,7 +107,7 @@ class VectorStore:
                     "id": row["id"],
                     "content": row["content"],
                     "doc_type": row["doc_type"],
-                    "metadata": row["metadata"],
+                    "metadata": json.loads(row["metadata"]) if isinstance(row["metadata"], str) else (row["metadata"] or {}),
                     "similarity": float(row["similarity"])
                 }
                 for row in rows

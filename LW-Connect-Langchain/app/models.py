@@ -36,11 +36,18 @@ class QueryRequest(BaseModel):
     provider: Optional[str] = None
 
 class MentorRecommendationRequest(BaseModel):
-    user_goals: List[str]
-    user_skills: List[str]
+    user_id: Optional[str] = None
+    user_goals: List[str] = []
+    user_skills: List[str] = []
+    skills: List[str] = []
     cohort_id: Optional[str] = None
     top_k: int = 3
     provider: Optional[str] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        # If user_skills is empty but skills is provided, use skills
+        if not self.user_skills and self.skills:
+            self.user_skills = self.skills
 
 class CourseRecommendationRequest(BaseModel):
     user_id: str

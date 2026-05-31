@@ -6,6 +6,8 @@ from app.models.course import Course
 from app.models.cohort import Cohort, CohortEnrollment
 from app.models.booking import Booking, BookingStatus, Feedback
 from app.models.embedding import EmbeddingMetadata
+from app.models.notification import Notification
+from app.models.pathway import Pathway
 
 __all__ = [
     "User",
@@ -19,4 +21,6 @@ __all__ = [
     "BookingStatus",
     "Feedback",
     "EmbeddingMetadata",
+    "Notification",
+    "Pathway",
 ]

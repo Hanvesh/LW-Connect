@@ -70,7 +70,7 @@ class MentorRecommendationEngine:
         if request.user_skills:
             query_parts.append(f"Skills: {', '.join(request.user_skills)}")
         
-        return " ".join(query_parts)
+        return " ".join(query_parts) if query_parts else "recommend a mentor"
     
     def _build_mentor_context(self, results: List[Dict[str, Any]]) -> str:
         """Build mentor context for LLM"""
