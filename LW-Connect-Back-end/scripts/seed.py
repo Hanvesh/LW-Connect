@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import AsyncSessionLocal
 from app.core.security import get_password_hash
 from app.models import User, Learner, Mentor, Course, Cohort, UserRole
+from app.models.session import Session
 import uuid
 from datetime import datetime, date, timedelta
 
@@ -21,7 +22,7 @@ async def seed_data():
         print("🌱 Seeding database...")
         
         # Clear existing data (order matters due to foreign keys)
-        for table in ['cohort_enrollments', 'cohorts', 'bookings', 'feedback', 'courses', 'learners', 'mentors', 'users']:
+        for table in ['sessions', 'cohort_enrollments', 'cohorts', 'bookings', 'feedback', 'courses', 'learners', 'mentors', 'notifications', 'users']:
             await db.execute(text(f'DELETE FROM {table}'))
         await db.commit()
         
@@ -204,6 +205,65 @@ async def seed_data():
             is_active=True,
         )
         db.add(cohort2)
+        
+        await db.commit()
+        
+        # Create sessions
+        session1 = Session(
+            id=uuid.uuid4(),
+            mentor_id=mentor_user1.id,
+            session_date=date.today() + timedelta(days=3),
+            start_time="10:00",
+            end_time="11:00",
+            meeting_link="https://meet.lwconnect.com/session-innovation-101",
+            concept="Innovation Frameworks",
+            description="Introduction to key innovation frameworks used in public sector",
+            is_active=True,
+            max_participants=20,
+        )
+        db.add(session1)
+        
+        session2 = Session(
+            id=uuid.uuid4(),
+            mentor_id=mentor_user1.id,
+            session_date=date.today() + timedelta(days=5),
+            start_time="14:00",
+            end_time="15:30",
+            meeting_link="https://meet.lwconnect.com/session-design-thinking",
+            concept="Design Thinking for Policy",
+            description="Apply design thinking methodology to policy challenges",
+            is_active=True,
+            max_participants=15,
+        )
+        db.add(session2)
+        
+        session3 = Session(
+            id=uuid.uuid4(),
+            mentor_id=mentor_user2.id,
+            session_date=date.today() + timedelta(days=4),
+            start_time="09:00",
+            end_time="10:00",
+            meeting_link="https://meet.lwconnect.com/session-agile-gov",
+            concept="Agile in Government",
+            description="How to apply agile methodologies in government projects",
+            is_active=True,
+            max_participants=25,
+        )
+        db.add(session3)
+        
+        session4 = Session(
+            id=uuid.uuid4(),
+            mentor_id=mentor_user2.id,
+            session_date=date.today() + timedelta(days=7),
+            start_time="11:00",
+            end_time="12:00",
+            meeting_link="https://meet.lwconnect.com/session-digital-strategy",
+            concept="Digital Transformation Strategy",
+            description="Building a digital transformation roadmap for your organization",
+            is_active=True,
+            max_participants=30,
+        )
+        db.add(session4)
         
         await db.commit()
         

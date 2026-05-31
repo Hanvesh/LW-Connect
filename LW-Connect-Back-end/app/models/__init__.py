@@ -8,6 +8,7 @@ from app.models.booking import Booking, BookingStatus, Feedback
 from app.models.embedding import EmbeddingMetadata
 from app.models.notification import Notification
 from app.models.pathway import Pathway
+from app.models.session import Session
 
 __all__ = [
     "User",
@@ -23,4 +24,5 @@ __all__ = [
     "EmbeddingMetadata",
     "Notification",
     "Pathway",
+    "Session",
 ]
