@@ -1,8 +1,10 @@
-"""Enhanced AI service with semantic mentor recommendations."""
+"""Enhanced AI service with semantic mentor recommendations and user preferences."""
 from typing import List, Dict, Optional
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.mentor import Mentor
+from app.models.user_preferences import UserPreferences
+from app.repositories.user_preferences_repository import UserPreferencesRepository
 from app.ai.training_data import get_training_data, get_availability_pattern
 import httpx
 import os
@@ -15,15 +17,32 @@ class AIService:
         self.db = db
         self.training_data = get_training_data()
         self.langchain_url = os.getenv("LANGCHAIN_SERVICE_URL", "http://localhost:8001")
+        self.preferences_repo = UserPreferencesRepository(db)
     
     async def recommend_mentors(
         self, 
         learner_interests: List[str],
         learner_goals: Optional[List[str]] = None,
         availability_preference: Optional[str] = None,
-        limit: int = 3
+        limit: int = 3,
+        user_id: Optional[str] = None
     ) -> List[Dict]:
-        """Recommend mentors using semantic AI matching."""
+        """Recommend mentors using semantic AI matching with user preferences."""
+        
+        # Get user preferences if user_id provided
+        user_preferences = None
+        if user_id:
+            user_preferences = self.preferences_repo.get_by_user_id(user_id)
+            if user_preferences:
+                # Override limit with user preference
+                limit = user_preferences.max_recommendations_per_session or limit
+                # Use preferred topics if available
+                if user_preferences.preferred_topics:
+                    learner_interests.extend(user_preferences.preferred_topics)
+                # Filter out blocked topics
+                if user_preferences.blocked_topics:
+                    learner_interests = [topic for topic in learner_interests 
+                                       if topic not in user_preferences.blocked_topics]
         
         # Try semantic recommendation via langchain service
         try:
@@ -35,26 +54,28 @@ class AIService:
                         "user_skills": learner_interests,
                         "cohort_id": None,
                         "top_k": limit,
-                        "provider": "bedrock"
+                        "provider": "bedrock",
+                        "user_preferences": self._serialize_preferences(user_preferences) if user_preferences else None
                     }
                 )
                 if response.status_code == 200:
                     result = response.json()
-                    return self._enrich_recommendations(result.get("recommendations", []))
+                    return self._enrich_recommendations(result.get("recommendations", []), user_preferences)
         except (httpx.TimeoutException, httpx.ConnectError):
             pass  # Fallback to rule-based
         
         # Fallback: rule-based matching
-        return self._rule_based_recommend(learner_interests, learner_goals, availability_preference, limit)
+        return self._rule_based_recommend(learner_interests, learner_goals, availability_preference, limit, user_preferences)
     
     def _rule_based_recommend(
         self,
         learner_interests: List[str],
         learner_goals: Optional[List[str]],
         availability_preference: Optional[str],
-        limit: int
+        limit: int,
+        user_preferences: Optional[UserPreferences] = None
     ) -> List[Dict]:
-        """Rule-based mentor recommendation fallback."""
+        """Rule-based mentor recommendation fallback with preferences."""
         mentors = self.db.query(Mentor).join(User).filter(
             User.role == 'mentor',
             User.is_active == True,
@@ -66,7 +87,7 @@ class AIService:
         
         scored_mentors = []
         for mentor in mentors:
-            score = self._calculate_mentor_score(mentor, learner_interests, learner_goals, availability_preference)
+            score = self._calculate_mentor_score(mentor, learner_interests, learner_goals, availability_preference, user_preferences)
             scored_mentors.append({
                 "mentor_id": mentor.user_id,
                 "name": mentor.user.name,
@@ -84,8 +105,8 @@ class AIService:
         scored_mentors.sort(key=lambda x: x["score"], reverse=True)
         return scored_mentors[:limit]
     
-    def _enrich_recommendations(self, recommendations: List[Dict]) -> List[Dict]:
-        """Enrich AI recommendations with DB data."""
+    def _enrich_recommendations(self, recommendations: List[Dict], user_preferences: Optional[UserPreferences] = None) -> List[Dict]:
+        """Enrich AI recommendations with DB data and preferences."""
         enriched = []
         for rec in recommendations:
             mentor = self.db.query(Mentor).filter(Mentor.user_id == rec.get("mentor_id")).first()
@@ -103,9 +124,10 @@ class AIService:
         mentor: Mentor,
         interests: List[str],
         goals: Optional[List[str]],
-        availability_pref: Optional[str]
+        availability_pref: Optional[str],
+        user_preferences: Optional[UserPreferences] = None
     ) -> float:
-        """Calculate match score for a mentor."""
+        """Calculate match score for a mentor with user preferences."""
         score = 0.0
         
         if interests:
@@ -126,6 +148,15 @@ class AIService:
         
         experience_score = min(mentor.years_experience / 20, 1.0) * 20
         score += experience_score
+        
+        # Apply user preferences
+        if user_preferences:
+            # Preferred time slots matching
+            if user_preferences.preferred_time_slots and mentor.availability in user_preferences.preferred_time_slots:
+                score += 15
+            # Communication style preference (if mentor has this info)
+            if user_preferences.preferred_communication_style:
+                score += 5  # Bonus for having preference set
         
         if availability_pref and mentor.availability == availability_pref:
             score += 10
@@ -183,3 +214,15 @@ class AIService:
             "availability": mentor.availability,
             "availability_slots": get_availability_pattern(mentor.availability)
         } for mentor in mentors]
+    
+    def _serialize_preferences(self, preferences: UserPreferences) -> Dict:
+        """Serialize user preferences for API calls."""
+        return {
+            "learning_style": preferences.preferred_learning_style,
+            "session_duration": preferences.preferred_session_duration,
+            "time_slots": preferences.preferred_time_slots,
+            "communication_style": preferences.preferred_communication_style,
+            "difficulty_level": preferences.content_difficulty_level,
+            "preferred_topics": preferences.preferred_topics,
+            "blocked_topics": preferences.blocked_topics
+        }

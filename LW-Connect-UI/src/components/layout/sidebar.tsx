@@ -13,6 +13,7 @@ const learnerNav = [
   { name: 'Cohorts', href: '/cohorts', icon: 'diversity_3' },
   { name: 'AI Assistant', href: '/ai-assistant', icon: 'auto_awesome' },
   { name: 'Sessions', href: '/sessions', icon: 'event_available' },
+  { name: 'Preferences', href: '/preferences', icon: 'tune' },
 ]
 
 const mentorNav = [

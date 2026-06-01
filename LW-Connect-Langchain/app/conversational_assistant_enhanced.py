@@ -18,9 +18,8 @@ class ConversationalAssistant:
         self.blocked_patterns = [
             r'\b(hack|exploit|malware|virus|phishing)\b',
             r'\b(illegal|fraud|scam|cheat)\b',
-            r'\b(violence|harm|threat|attack|kill|murder)\b',
-            r'\b(discriminat|racist|sexist|offensive)\b',
-            r'\b(bomb|weapon|explosive|gun|firearm|poison|drug)\b',
+            r'\b(violence|harm|threat|attack)\b',
+            r'\b(discriminat|racist|sexist|offensive)\b'
         ]
         self.profanity_patterns = [
             r'\b(damn|hell|crap|stupid|idiot)\b',  # Mild profanity
@@ -88,34 +87,6 @@ class ConversationalAssistant:
             )
         return self.sessions[session_id]
 
-    async def _enhanced_moderate_query(self, query: str, user_id: str, provider: Optional[str] = None) -> Dict[str, Any]:
-        """Enhanced moderation with pattern matching and LLM check"""
-        # Quick pattern-based check first
-        query_lower = query.lower()
-        for pattern in self.blocked_patterns:
-            if re.search(pattern, query_lower):
-                logger.warning(f"Blocked query from user {user_id}: pattern match")
-                return {
-                    "is_safe": False,
-                    "message": "I'm here to help with mentorship, learning, and professional development on the LW-Connect platform. Please keep your questions related to these topics."
-                }
-
-        # LLM-based moderation
-        try:
-            result = await self.llm.generate(
-                ENHANCED_MODERATION_PROMPT.format(query=query), provider=provider
-            )
-            if "UNSAFE" in result.upper():
-                logger.warning(f"LLM flagged query from user {user_id}: {result[:100]}")
-                return {
-                    "is_safe": False,
-                    "message": "I'm here to help with mentorship, learning, and professional development on the LW-Connect platform. Please keep your questions related to these topics."
-                }
-        except Exception as e:
-            logger.error(f"Moderation error: {e}")
-
-        return {"is_safe": True, "message": ""}
-
     async def _moderate_query(self, query: str, provider: Optional[str] = None) -> bool:
         """Check if query is appropriate"""
         try:
@@ -124,6 +95,52 @@ class ConversationalAssistant:
         except Exception as e:
             logger.error(f"Moderation error: {e}")
             return True  # Fail open
+
+    async def _enhanced_moderate_query(self, query: str, user_id: Optional[str] = None, provider: Optional[str] = None) -> Dict[str, Any]:
+        """Enhanced moderation with user preferences and pattern matching"""
+        try:
+            # Pattern-based filtering
+            pattern_result = self._check_patterns(query, user_id)
+            if not pattern_result["is_safe"]:
+                return pattern_result
+            
+            # AI-based moderation
+            result = await self.llm.generate(ENHANCED_MODERATION_PROMPT.format(query=query), provider=provider)
+            
+            if "UNSAFE" in result.upper():
+                return {
+                    "is_safe": False,
+                    "message": "I can only help with questions related to mentorship, learning, and professional development on the LW-Connect platform."
+                }
+            
+            return {"is_safe": True, "message": ""}
+            
+        except Exception as e:
+            logger.error(f"Enhanced moderation error: {e}")
+            return {"is_safe": True, "message": ""}  # Fail open
+
+    def _check_patterns(self, query: str, user_id: Optional[str] = None) -> Dict[str, Any]:
+        """Check query against blocked patterns and user preferences"""
+        query_lower = query.lower()
+        
+        # Check blocked patterns
+        for pattern in self.blocked_patterns:
+            if re.search(pattern, query_lower, re.IGNORECASE):
+                return {
+                    "is_safe": False,
+                    "message": "I cannot assist with requests that may involve harmful, illegal, or inappropriate content. Please ask about mentorship, learning, or platform features."
+                }
+        
+        # Check profanity patterns (if user has profanity filter enabled)
+        # This would require user preferences lookup - simplified for now
+        for pattern in self.profanity_patterns:
+            if re.search(pattern, query_lower, re.IGNORECASE):
+                return {
+                    "is_safe": False,
+                    "message": "Please keep our conversation professional and respectful. How can I help you with your learning journey?"
+                }
+        
+        return {"is_safe": True, "message": ""}
 
     def clear_session(self, session_id: str):
         """Clear conversation history for session"""

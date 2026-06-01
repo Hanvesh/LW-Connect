@@ -9,6 +9,7 @@ from app.models.embedding import EmbeddingMetadata
 from app.models.notification import Notification
 from app.models.pathway import Pathway
 from app.models.session import Session
+from app.models.user_preferences import UserPreferences, AITopicSuggestion
 
 __all__ = [
     "User",
@@ -25,4 +26,6 @@ __all__ = [
     "Notification",
     "Pathway",
     "Session",
+    "UserPreferences",
+    "AITopicSuggestion",
 ]

@@ -71,9 +71,10 @@ class VectorStore:
         query_embedding: List[float], 
         top_k: int = 5,
         doc_type: Optional[DocumentType] = None,
-        metadata_filter: Optional[Dict[str, Any]] = None
+        metadata_filter: Optional[Dict[str, Any]] = None,
+        preferred_topics: Optional[List[str]] = None
     ) -> List[Dict[str, Any]]:
-        """Perform similarity search with optional filters"""
+        """Perform similarity search with optional filters and preferred topics boost"""
         async with self.pool.acquire() as conn:
             await register_vector(conn)
             
@@ -97,7 +98,18 @@ class VectorStore:
                     params.append(str(value))
                     param_idx += 1
             
-            query += f" ORDER BY embedding <=> $1 LIMIT ${param_idx}"
+            # Boost results matching user's preferred topics
+            if preferred_topics:
+                topic_conditions = " OR ".join(
+                    f"content ILIKE ${param_idx + i}" for i in range(len(preferred_topics))
+                )
+                query += f" ORDER BY CASE WHEN ({topic_conditions}) THEN 0 ELSE 1 END, embedding <=> $1 LIMIT ${param_idx + len(preferred_topics)}"
+                for topic in preferred_topics:
+                    params.append(f"%{topic}%")
+                param_idx += len(preferred_topics)
+            else:
+                query += f" ORDER BY embedding <=> $1 LIMIT ${param_idx}"
+            
             params.append(top_k)
             
             rows = await conn.fetch(query, *params)
