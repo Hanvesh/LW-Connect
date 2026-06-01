@@ -35,3 +35,9 @@ pytest==7.4.4
 pytest-asyncio==0.23.3
 pytest-cov==4.1.0
 faker==22.0.0
+
+# SSO/SAML Support
+python3-saml==1.16.0
+
+# Predictive Analytics
+numpy==1.26.2

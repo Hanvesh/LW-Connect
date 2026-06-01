@@ -1,7 +1,7 @@
 """API v1 router."""
 from fastapi import APIRouter
 
-from app.api.v1 import auth, mentors, bookings, courses, cohorts, dashboard, users, notifications, reports, pathways, sessions, ai_recommendations, user_preferences
+from app.api.v1 import auth, mentors, bookings, courses, cohorts, dashboard, users, notifications, reports, pathways, sessions, ai_recommendations, user_preferences, outcomes, sso, predictions
 
 api_router = APIRouter()
 
@@ -18,3 +18,6 @@ api_router.include_router(pathways.router)
 api_router.include_router(sessions.router)
 api_router.include_router(ai_recommendations.router)
 api_router.include_router(user_preferences.router)
+api_router.include_router(outcomes.router, prefix="/outcomes", tags=["outcomes"])
+api_router.include_router(sso.router)
+api_router.include_router(predictions.router)
